@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatchAddingParameters", "BatchAddingParameters\BatchAddingParameters.csproj", "{0D01A6E8-1C21-468C-B1DC-F28EB1047AF2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D01A6E8-1C21-468C-B1DC-F28EB1047AF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D01A6E8-1C21-468C-B1DC-F28EB1047AF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D01A6E8-1C21-468C-B1DC-F28EB1047AF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D01A6E8-1C21-468C-B1DC-F28EB1047AF2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9B02B92D-54A4-436C-ADAB-532A59D9196E}
+	EndGlobalSection
+EndGlobal
