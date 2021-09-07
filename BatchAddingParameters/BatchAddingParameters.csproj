@@ -53,12 +53,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddCommand.cs" />
-    <Compile Include="CommandForm.cs">
+    <Compile Include="CommandForAddingParameters.cs" />
+    <Compile Include="FormForAddingParameter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CommandForm.Designer.cs">
-      <DependentUpon>CommandForm.cs</DependentUpon>
+    <Compile Include="FormForAddingParameter.Designer.cs">
+      <DependentUpon>FormForAddingParameter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormForPresentation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormForPresentation.Designer.cs">
+      <DependentUpon>FormForPresentation.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,13 +76,23 @@
     <Content Include="res\bap-icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\bap.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\bap.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\goal-icon.ico" />
+    <Content Include="res\ФОП2019.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CommandForm.resx">
-      <DependentUpon>CommandForm.cs</DependentUpon>
+    <EmbeddedResource Include="FormForAddingParameter.resx">
+      <DependentUpon>FormForAddingParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormForPresentation.resx">
+      <DependentUpon>FormForPresentation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

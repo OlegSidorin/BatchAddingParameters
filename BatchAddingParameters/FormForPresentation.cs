@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace BatchAddingParameters
 {
-    public partial class CommandForm : Form
+    public partial class FormForPresentation : Form
     {
-        public CommandForm()
+        public FormForPresentation()
         {
             InitializeComponent();
         }
