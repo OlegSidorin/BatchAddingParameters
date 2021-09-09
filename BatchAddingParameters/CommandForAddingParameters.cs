@@ -15,10 +15,12 @@ namespace BatchAddingParameters
     [Transaction(TransactionMode.Manual), Regeneration(RegenerationOption.Manual)]
     class CommandForAddingParameters : IExternalCommand
     {
+        public static string DirectoryTreeStartDirectory = @"C:\Users\o.sidorin\Downloads";
         public static string FOPPath { get; set; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\res\\ФОП2019.txt";
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             var app = commandData.Application.Application;
+            
 
             /*
             var doc = commandData.Application.Application.OpenDocumentFile(@"C:\Users\o.sidorin\Downloads\Шаблон АР\M1_Окно_Проем.rfa");
@@ -33,15 +35,18 @@ namespace BatchAddingParameters
             doc.Close();
             */
 
-            var formForAdding = new FormForAddingParameter();
+            app.SharedParametersFilename = FOPPath;
+            ButtonExternalEvent.CommandData = commandData;
+            var formForAddingParameters = new FormForAddingParameter();
+
 
             List<string> groupNamesInFOP = GetGroupsOfFOP(app);
-            formForAdding.treeView1.BeginUpdate();
+            formForAddingParameters.treeViewParameters.BeginUpdate();
             int z = 0;
             foreach (string groupName in groupNamesInFOP)
             {
-                formForAdding.treeView1.Nodes.Add(groupName);
-                formForAdding.treeView1.Nodes[z].NodeFont = new System.Drawing.Font("Arial", 12, System.Drawing.FontStyle.Bold);
+                formForAddingParameters.treeViewParameters.Nodes.Add(groupName);
+                formForAddingParameters.treeViewParameters.Nodes[z].NodeFont = new System.Drawing.Font("Arial", 12, System.Drawing.FontStyle.Regular);
                 z += 1;
             }
             
@@ -52,20 +57,23 @@ namespace BatchAddingParameters
                 int j = 0;
                 foreach (string item in items)
                 {
-                    formForAdding.treeView1.Nodes[i].Nodes.Add(item);
-                    formForAdding.treeView1.Nodes[i].Nodes[j].NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Italic);
+                    formForAddingParameters.treeViewParameters.Nodes[i].Nodes.Add(item);
+                    formForAddingParameters.treeViewParameters.Nodes[i].Nodes[j].NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Italic);
                     j += 1;
                 }
                 i += 1;
             }
 
-            formForAdding.treeView1.EndUpdate();
+            formForAddingParameters.treeViewParameters.EndUpdate();
 
-            formForAdding.treeView2.BeginUpdate();
-            ListDirectory(formForAdding.treeView2, @"C:\Users\o.sidorin\Downloads");
-            formForAdding.treeView2.EndUpdate();
+            formForAddingParameters.treeViewFamilies.BeginUpdate();
+            ListDirectory(formForAddingParameters.treeViewFamilies, DirectoryTreeStartDirectory);
+            formForAddingParameters.treeViewFamilies.EndUpdate();
 
-            formForAdding.Show();
+            ButtonExternalEvent.FormForAddingParameter = formForAddingParameters;
+
+            formForAddingParameters.Show();
+
 
             return Result.Succeeded;
         }
@@ -177,10 +185,14 @@ namespace BatchAddingParameters
                     stack.Push(childDirectoryNode);
                 }
                 foreach (var file in directoryInfo.GetFiles())
+                {
                     currentNode.Nodes.Add(new TreeNode(file.Name));
+                }
+                    
             }
-
+            node.NodeFont = new System.Drawing.Font("Arial", 12, System.Drawing.FontStyle.Regular);
             treeView.Nodes.Add(node);
+
         }
     }
 }
