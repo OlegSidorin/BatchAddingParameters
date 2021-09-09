@@ -19,24 +19,13 @@ namespace BatchAddingParameters
         public static string FOPPath { get; set; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\res\\ФОП2019.txt";
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+
+            #region WindowForm
             var app = commandData.Application.Application;
-            
-
-            /*
-            var doc = commandData.Application.Application.OpenDocumentFile(@"C:\Users\o.sidorin\Downloads\Шаблон АР\M1_Окно_Проем.rfa");
-            var parameters = GetFamilyParametersToString(doc);
-            var addedParameter = AddSharedParameterInFamily(app, doc, "05 Необязательные ОБЩИЕ", "Тестовый параметр");
-
-            var myForm = new FormForPresentation();
-            myForm.textBox1.Text = parameters;
-            myForm.textBox2.Text = addedParameter;
-            myForm.Show();
-
-            doc.Close();
-            */
 
             app.SharedParametersFilename = FOPPath;
             ButtonExternalEvent.CommandData = commandData;
+            ButtonDeleteExternalEvent.CommandData = commandData;
             var formForAddingParameters = new FormForAddingParameter();
 
 
@@ -46,7 +35,7 @@ namespace BatchAddingParameters
             foreach (string groupName in groupNamesInFOP)
             {
                 formForAddingParameters.treeViewParameters.Nodes.Add(groupName);
-                formForAddingParameters.treeViewParameters.Nodes[z].NodeFont = new System.Drawing.Font("Arial", 12, System.Drawing.FontStyle.Regular);
+                formForAddingParameters.treeViewParameters.Nodes[z].NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
                 z += 1;
             }
             
@@ -58,7 +47,7 @@ namespace BatchAddingParameters
                 foreach (string item in items)
                 {
                     formForAddingParameters.treeViewParameters.Nodes[i].Nodes.Add(item);
-                    formForAddingParameters.treeViewParameters.Nodes[i].Nodes[j].NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Italic);
+                    formForAddingParameters.treeViewParameters.Nodes[i].Nodes[j].NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Regular);
                     j += 1;
                 }
                 i += 1;
@@ -70,11 +59,59 @@ namespace BatchAddingParameters
             ListDirectory(formForAddingParameters.treeViewFamilies, DirectoryTreeStartDirectory);
             formForAddingParameters.treeViewFamilies.EndUpdate();
 
+            #region Fill the combobox
+            formForAddingParameters.comboBoxGroup.Items.Add("Моменты");
+            formForAddingParameters.comboBoxGroup.Items.Add("Силы");
+            formForAddingParameters.comboBoxGroup.Items.Add("Геометрия разделения");
+            formForAddingParameters.comboBoxGroup.Items.Add("Сегменты и соединительные детали");
+            formForAddingParameters.comboBoxGroup.Items.Add("Общая легенда");
+            formForAddingParameters.comboBoxGroup.Items.Add("Видимость");
+            formForAddingParameters.comboBoxGroup.Items.Add("Данные");
+            formForAddingParameters.comboBoxGroup.Items.Add("Электросети - Создание цепей");
+            formForAddingParameters.comboBoxGroup.Items.Add("Общие");
+            formForAddingParameters.comboBoxGroup.Items.Add("Свойства модели");
+            formForAddingParameters.comboBoxGroup.Items.Add("Результаты анализа");
+            formForAddingParameters.comboBoxGroup.Items.Add("Редактирование формы перекрытия");
+            formForAddingParameters.comboBoxGroup.Items.Add("Фотометрические");
+            formForAddingParameters.comboBoxGroup.Items.Add("Свойства экологически чистого здания");
+            formForAddingParameters.comboBoxGroup.Items.Add("Шрифт заголовков");
+            formForAddingParameters.comboBoxGroup.Items.Add("Система пожаротушения");
+            formForAddingParameters.comboBoxGroup.Items.Add("Аналитическая модель");
+            formForAddingParameters.comboBoxGroup.Items.Add("Набор арматурных стержней");
+            formForAddingParameters.comboBoxGroup.Items.Add("Слои");
+            formForAddingParameters.comboBoxGroup.Items.Add("Параметры IFC");
+            formForAddingParameters.comboBoxGroup.Items.Add("Электросети (А)");
+            formForAddingParameters.comboBoxGroup.Items.Add("Рачет энергопотребления");
+            formForAddingParameters.comboBoxGroup.Items.Add("Расчет несущих конструкций");
+            formForAddingParameters.comboBoxGroup.Items.Add("Механизмы - Расход");
+            formForAddingParameters.comboBoxGroup.Items.Add("Механизмы - Нагрузки");
+            formForAddingParameters.comboBoxGroup.Items.Add("Электросети - Нагрузки");
+            formForAddingParameters.comboBoxGroup.Items.Add("Электросети - Освещение");
+            formForAddingParameters.comboBoxGroup.Items.Add("Текст");
+            formForAddingParameters.comboBoxGroup.Items.Add("Зависимости");
+            formForAddingParameters.comboBoxGroup.Items.Add("Стадии");
+            formForAddingParameters.comboBoxGroup.Items.Add("Механизмы");
+            formForAddingParameters.comboBoxGroup.Items.Add("Несущие конструкции");
+            formForAddingParameters.comboBoxGroup.Items.Add("Сантехника");
+            formForAddingParameters.comboBoxGroup.Items.Add("Электросети");
+            formForAddingParameters.comboBoxGroup.Items.Add("Материалы и отделка");
+            formForAddingParameters.comboBoxGroup.Items.Add("Графика");
+            formForAddingParameters.comboBoxGroup.Items.Add("Строительство");
+            formForAddingParameters.comboBoxGroup.Items.Add("Размеры");
+            formForAddingParameters.comboBoxGroup.Items.Add("Идентификация");
+            formForAddingParameters.comboBoxGroup.Items.Add("Прочее");
+            #endregion
+
             ButtonExternalEvent.FormForAddingParameter = formForAddingParameters;
+            ButtonDeleteExternalEvent.FormForAddingParameter = formForAddingParameters;
 
             formForAddingParameters.Show();
+            #endregion
 
-
+            /*
+            FormWPF formWPF = new FormWPF();
+            formWPF.Show();
+            */
             return Result.Succeeded;
         }
         private string GetFamilyParametersToString(Document doc)
@@ -99,41 +136,6 @@ namespace BatchAddingParameters
                 str += p.Definition.Name + Environment.NewLine;
             }
 
-            return str;
-        }
-        private string AddSharedParameterInFamily(Application app, Document doc, string groupName, string sharedParameterName)
-        {
-            string str = "";
-            if (!doc.IsFamilyDocument) return "не семейство";
-            FamilyManager familyManager = doc.FamilyManager;
-            //FamilyType familyType = familyManager.CurrentType;
-            FamilyParameterSet parametersList = familyManager.Parameters;
-
-            foreach (FamilyParameter p in parametersList)
-            {
-                if (p.Definition.Name == sharedParameterName) return p.Definition.Name + ": параметр существует";
-            }
-
-            try
-            {
-                app.SharedParametersFilename = FOPPath;
-                using (Transaction t = new Transaction(doc, "Add paramter"))
-                {
-                    t.Start();
-                    DefinitionFile sharedParametersFile = app.OpenSharedParameterFile();
-                    DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(groupName);
-                    Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
-                    ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
-                    FamilyParameter familyParameter = familyManager.AddParameter(externalDefinition, BuiltInParameterGroup.PG_TEXT, false);
-                    str = familyParameter.Definition.Name;
-                    t.Commit();
-                }
-
-            }
-            catch (Exception e)
-            {
-                TaskDialog.Show("!", e.ToString());
-            }
             return str;
         }
         private List<string> GetGroupsOfFOP(Application app)

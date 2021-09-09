@@ -17,19 +17,23 @@ namespace BatchAddingParameters
 {
     public partial class FormForAddingParameter : System.Windows.Forms.Form
     {
-        public ButtonExternalEvent buttonExternalEvent;
-        public ExternalEvent externalEvent;
+        public ButtonExternalEvent ButtonExternalEvent;
+        public ExternalEvent ExternalEvent;
+        public ButtonDeleteExternalEvent ButtonDeleteExternalEvent;
+        public ExternalEvent ExternalEventButtonDelete;
         public FormForAddingParameter()
         {
             InitializeComponent();
-
+             
             treeViewParameters.DrawMode = TreeViewDrawMode.OwnerDrawText;
             treeViewParameters.DrawNode += new DrawTreeNodeEventHandler(TreeViewParameters_DrawNode);
             treeViewFamilies.DrawMode = TreeViewDrawMode.OwnerDrawText;
             treeViewFamilies.DrawNode += new DrawTreeNodeEventHandler(TreeViewFamilies_DrawNode);
 
-            buttonExternalEvent = new ButtonExternalEvent();
-            externalEvent = ExternalEvent.Create(buttonExternalEvent);
+            ButtonExternalEvent = new ButtonExternalEvent();
+            ExternalEvent = ExternalEvent.Create(ButtonExternalEvent);
+            ButtonDeleteExternalEvent = new ButtonDeleteExternalEvent();
+            ExternalEventButtonDelete = ExternalEvent.Create(ButtonDeleteExternalEvent);
         }
 
         private void TreeViewFamilies_DrawNode(object sender, DrawTreeNodeEventArgs e)
@@ -188,18 +192,91 @@ namespace BatchAddingParameters
             ButtonExternalEvent.PathToFamily = buttonFamily.Text;
             ButtonExternalEvent.SharedParameter = buttonParameter.Text;
             ButtonExternalEvent.IsInstance = checkBoxInstance.Checked;
+
             if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
             {
-                externalEvent.Raise();
+                ExternalEvent.Raise();
             }
             else
             {
-                buttonResult.Text = "не хватает данных";
+                textBoxResult.Text += "не хватает данных" + Environment.NewLine;
             }
             //TaskDialog.Show("1", buttonFamily.Text + " <-|-> "+ buttonParameter.Text);
             
             
             //Close();
+        }
+
+        private void ComboBoxGroup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ButtonExternalEvent.PGGroup = GetPGGroup(comboBoxGroup.Text);   
+        }
+
+        public BuiltInParameterGroup GetPGGroup(string insert)
+        {
+            if (insert == "Моменты") return BuiltInParameterGroup.PG_MOMENTS;
+            if (insert == "Силы") return BuiltInParameterGroup.PG_FORCES;
+            if (insert == "Геометрия разделения") return BuiltInParameterGroup.PG_DIVISION_GEOMETRY;
+            if (insert == "Сегменты и соединительные детали") return BuiltInParameterGroup.PG_SEGMENTS_FITTINGS;
+            if (insert == "Общая легенда") return BuiltInParameterGroup.PG_OVERALL_LEGEND;
+            if (insert == "Видимость") return BuiltInParameterGroup.PG_VISIBILITY;
+            if (insert == "Данные") return BuiltInParameterGroup.PG_DATA;
+            if (insert == "Электросети - Создание цепей") return BuiltInParameterGroup.PG_ELECTRICAL_CIRCUITING;
+            if (insert == "Общие") return BuiltInParameterGroup.PG_GENERAL;
+            if (insert == "Свойства модели") return BuiltInParameterGroup.PG_ADSK_MODEL_PROPERTIES;
+            if (insert == "Результаты анализа") return BuiltInParameterGroup.PG_ANALYSIS_RESULTS;
+            if (insert == "Редактирование формы перекрытия") return BuiltInParameterGroup.PG_SLAB_SHAPE_EDIT;
+            if (insert == "Фотометрические") return BuiltInParameterGroup.PG_LIGHT_PHOTOMETRICS;
+            if (insert == "Свойства экологически чистого здания") return BuiltInParameterGroup.PG_GREEN_BUILDING;
+            if (insert == "Шрифт заголовков") return BuiltInParameterGroup.PG_TITLE;
+            if (insert == "Система пожаротушения") return BuiltInParameterGroup.PG_FIRE_PROTECTION;
+            if (insert == "Аналитическая модель") return BuiltInParameterGroup.PG_ANALYTICAL_MODEL;
+            if (insert == "Набор арматурных стержней") return BuiltInParameterGroup.PG_REBAR_ARRAY;
+            if (insert == "Слои") return BuiltInParameterGroup.PG_REBAR_SYSTEM_LAYERS;
+            if (insert == "Параметры IFC") return BuiltInParameterGroup.PG_IFC;
+            if (insert == "Электросети (А)") return BuiltInParameterGroup.PG_AELECTRICAL;
+            if (insert == "Рачет энергопотребления") return BuiltInParameterGroup.PG_ENERGY_ANALYSIS;
+            if (insert == "Расчет несущих конструкций") return BuiltInParameterGroup.PG_STRUCTURAL_ANALYSIS;
+            if (insert == "Механизмы - Расход") return BuiltInParameterGroup.PG_MECHANICAL_AIRFLOW;
+            if (insert == "Механизмы - Нагрузки") return BuiltInParameterGroup.PG_MECHANICAL_LOADS;
+            if (insert == "Электросети - Нагрузки") return BuiltInParameterGroup.PG_ELECTRICAL_LOADS;
+            if (insert == "Электросети - Освещение") return BuiltInParameterGroup.PG_ELECTRICAL_LIGHTING;
+            if (insert == "Текст") return BuiltInParameterGroup.PG_TEXT;
+            if (insert == "Зависимости") return BuiltInParameterGroup.PG_CONSTRAINTS;
+            if (insert == "Стадии") return BuiltInParameterGroup.PG_PHASING;
+            if (insert == "Механизмы") return BuiltInParameterGroup.PG_MECHANICAL;
+            if (insert == "Несущие конструкции") return BuiltInParameterGroup.PG_STRUCTURAL;
+            if (insert == "Сантехника") return BuiltInParameterGroup.PG_PLUMBING;
+            if (insert == "Электросети") return BuiltInParameterGroup.PG_ELECTRICAL;
+            if (insert == "Материалы и отделка") return BuiltInParameterGroup.PG_MATERIALS;
+            if (insert == "Графика") return BuiltInParameterGroup.PG_GRAPHICS;
+            if (insert == "Строительство") return BuiltInParameterGroup.PG_CONSTRUCTION;
+            if (insert == "Размеры") return BuiltInParameterGroup.PG_GEOMETRY;
+            if (insert == "Идентификация") return BuiltInParameterGroup.PG_IDENTITY_DATA;
+            if (insert == "Прочее") return BuiltInParameterGroup.INVALID;
+
+
+            return BuiltInParameterGroup.INVALID;
+        }
+
+        private void CheckBoxInstance_CheckedChanged(object sender, EventArgs e)
+        {
+            ButtonExternalEvent.IsInstance = checkBoxInstance.Checked;
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            ButtonDeleteExternalEvent.PathToFamily = buttonFamily.Text;
+            ButtonDeleteExternalEvent.SharedParameter = buttonParameter.Text;
+
+            if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
+            {
+                ExternalEventButtonDelete.Raise();
+            }
+            else
+            {
+                textBoxResult.Text += "не хватает данных" + Environment.NewLine;
+            }
         }
     }
 
@@ -210,12 +287,12 @@ namespace BatchAddingParameters
         public static string PathToFamily;
         public static string SharedParameter;
         public static bool IsInstance;
+        public static BuiltInParameterGroup PGGroup;
         public void Execute(UIApplication uiApp)
         {
             var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
-            var resultText = AddSharedParameterInFamily(CommandData, doc, SharedParameter, IsInstance);
-            //FormForAddingParameter.buttonResult.Text = resultText;
-            FormForAddingParameter.textBoxResult.Text = resultText;
+            var resultText = AddSharedParameterInFamily(CommandData, doc, SharedParameter, IsInstance, PGGroup);
+            FormForAddingParameter.textBoxResult.Text += resultText + Environment.NewLine;
 
             /*
             MessageBox.Show(
@@ -252,14 +329,26 @@ namespace BatchAddingParameters
 
             return outputGroupName;
         }
-        private string AddSharedParameterInFamily(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance)
+        private string AddSharedParameterInFamily(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance, BuiltInParameterGroup group)
         {
             string str = "";
             if (!doc.IsFamilyDocument) return "не семейство";
             FamilyManager familyManager = doc.FamilyManager;
-            //FamilyType familyType = familyManager.CurrentType;
-            FamilyParameterSet parametersList = familyManager.Parameters;
+            FamilyType familyType = familyManager.CurrentType;
+            FamilyTypeSet types = familyManager.Types;
 
+            if (familyType == null)
+            {
+                using (Transaction t = new Transaction(doc, "change"))
+                {
+                    t.Start();
+                    familyType = familyManager.NewType("Тип 1");
+                    familyManager.CurrentType = familyType;
+                    t.Commit();
+                }
+            }
+
+            FamilyParameterSet parametersList = familyManager.Parameters;
             foreach (FamilyParameter p in parametersList)
             {
                 if (p.Definition.Name == sharedParameterName) return "Параметр " + p.Definition.Name + " существует";
@@ -275,7 +364,7 @@ namespace BatchAddingParameters
                     DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
                     Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
                     ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
-                    FamilyParameter familyParameter = familyManager.AddParameter(externalDefinition, BuiltInParameterGroup.PG_TEXT, isInstance);
+                    FamilyParameter familyParameter = familyManager.AddParameter(externalDefinition, group, isInstance);
                     str = familyParameter.Definition.Name + " был успешно добавлен в семейство " + doc.Title + ".rfa";
                     t.Commit();
                 }
@@ -283,10 +372,103 @@ namespace BatchAddingParameters
             }
             catch (Exception e)
             {
-                TaskDialog.Show("!", e.ToString());
+                using (Transaction t = new Transaction(doc, "Something happen"))
+                {
+                    t.Start();
+                    DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
+                    DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
+                    Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
+                    ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
+                    str = sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
+                    t.Commit();
+                }
+                
+                //TaskDialog.Show("!", e.ToString());
             }
+            doc.Save();
+            doc.Close();
             return str;
         }
+        
     }
-    
+    public class ButtonDeleteExternalEvent : IExternalEventHandler
+    {
+        public static string PathToFamily;
+        public static FormForAddingParameter FormForAddingParameter;
+        public static ExternalCommandData CommandData;
+        public static string SharedParameter;
+        public void Execute(UIApplication app)
+        {
+            var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+            var resultText = DeleteSharedParameterFromFamily(CommandData, doc, SharedParameter);
+            //MessageBox.Show("Ops");
+            FormForAddingParameter.textBoxResult.Text += resultText + Environment.NewLine;
+            return;
+        }
+
+        public string GetName()
+        {
+            return "External Delete Event";
+        }
+        private string DeleteSharedParameterFromFamily(ExternalCommandData commandData, Document doc, string sharedParameter)
+        {
+            if (doc.IsFamilyDocument)
+            {
+                FamilyManager familyManager = doc.FamilyManager;
+                FamilyType familyType;
+                familyType = familyManager.CurrentType;
+                if (familyType == null)
+                {
+                    using (Transaction t = new Transaction(doc, "change"))
+                    {
+                        t.Start();
+                        familyType = familyManager.NewType("Тип 1");
+                        familyManager.CurrentType = familyType;
+                        t.Commit();
+                    }
+                }
+
+                #region clear 
+                //TaskDialog.Show("Warning", "Privet");
+                try
+                {
+                    commandData.Application.Application.SharedParametersFilename = CommandForAddingParameters.FOPPath;
+                    using (Transaction t = new Transaction(doc, "Clear"))
+                    {
+                        t.Start();
+                        FamilyParameterSet parametersList = familyManager.Parameters;
+
+
+                            try
+                            {
+                                //var p = familyManager.get_Parameter(new Guid(guid));
+                                familyManager.RemoveParameter(p);
+                            }
+                            catch
+                            {
+
+                            }
+
+
+                        t.Commit();
+                    }
+                }
+                catch (Exception e)
+                {
+                    TaskDialog.Show("Warning 1", e.ToString());
+                }
+
+                #endregion
+
+            }
+            else
+            {
+                TaskDialog.Show("Warning main", "Это не семейство, команда работает только в семействе");
+            }
+
+            doc.Save();
+            doc.Close();
+            return "не реализовано";
+        }
+    }
 }
