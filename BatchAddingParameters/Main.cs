@@ -17,7 +17,7 @@ namespace BatchAddingParameters
         {
             var techPanel = application.CreateRibbonPanel(PanelTechName);
             string path = Assembly.GetExecutingAssembly().Location;
-            var MBtnData = new PushButtonData("MBtnData", "Добавь\nпараметры", path, "BatchAddingParameters.CommandForAddingParameters")
+            var MBtnData = new PushButtonData("MBtnData", "Добавь\nпараметры", path, "BatchAddingParameters.MainCommand")
             {
                 ToolTipImage = new BitmapImage(new Uri(Path.GetDirectoryName(path) + "\\res\\bap.png", UriKind.Absolute)),
                 //ToolTipImage = PngImageSource("BatchAddingParameters.res.bap-icon.png"),

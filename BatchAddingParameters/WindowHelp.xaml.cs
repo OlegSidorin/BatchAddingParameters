@@ -16,13 +16,18 @@ using System.Windows.Shapes;
 namespace BatchAddingParameters
 {
     /// <summary>
-    /// Логика взаимодействия для FormWPF.xaml
+    /// Логика взаимодействия для WindowHelp.xaml
     /// </summary>
-    public partial class FormWPF : Window
+    public partial class WindowHelp : Window
     {
-        public FormWPF()
+        public WindowHelp()
         {
             InitializeComponent();
+        }
+
+        private void buttonClick(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

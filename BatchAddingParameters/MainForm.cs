@@ -2,6 +2,8 @@
 using Autodesk.Revit.UI;
 using Application = Autodesk.Revit.ApplicationServices.Application;
 using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,31 +14,87 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Rectangle = System.Drawing.Rectangle;
+using System.Windows;
 
 namespace BatchAddingParameters
 {
-    public partial class FormForAddingParameter : System.Windows.Forms.Form
+    public partial class MainForm : System.Windows.Forms.Form
     {
-        public ButtonExternalEvent ButtonExternalEvent;
-        public ExternalEvent ExternalEvent;
+        public ButtonAddExternalEvent ButtonAddExternalEvent;
+        public ExternalEvent ExternalEventButtonAdd;
         public ButtonDeleteExternalEvent ButtonDeleteExternalEvent;
         public ExternalEvent ExternalEventButtonDelete;
-        public FormForAddingParameter()
+        public static List<string> PathToFamilyList;
+        public MainForm()
         {
             InitializeComponent();
              
             treeViewParameters.DrawMode = TreeViewDrawMode.OwnerDrawText;
             treeViewParameters.DrawNode += new DrawTreeNodeEventHandler(TreeViewParameters_DrawNode);
             treeViewFamilies.DrawMode = TreeViewDrawMode.OwnerDrawText;
-            treeViewFamilies.DrawNode += new DrawTreeNodeEventHandler(TreeViewFamilies_DrawNode);
+            treeViewFamilies.DrawNode += new DrawTreeNodeEventHandler(TreeViewFolders_DrawNode);
 
-            ButtonExternalEvent = new ButtonExternalEvent();
-            ExternalEvent = ExternalEvent.Create(ButtonExternalEvent);
+            ButtonAddExternalEvent = new ButtonAddExternalEvent();
+            ExternalEventButtonAdd = ExternalEvent.Create(ButtonAddExternalEvent);
             ButtonDeleteExternalEvent = new ButtonDeleteExternalEvent();
             ExternalEventButtonDelete = ExternalEvent.Create(ButtonDeleteExternalEvent);
-        }
 
-        private void TreeViewFamilies_DrawNode(object sender, DrawTreeNodeEventArgs e)
+            PathToFamilyList = new List<string>();
+        }
+        private void ButtonAdd_Click(object sender, EventArgs e)
+        {
+            if (PathToFamilyList.Count != 0)
+            {
+                ButtonAddExternalEvent.PathToFamilyList = PathToFamilyList;
+                ButtonAddExternalEvent.SharedParameter = buttonParameter.Text;
+                ButtonAddExternalEvent.IsInstance = checkBoxInstance.Checked;
+
+                if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
+                {
+                    ExternalEventButtonAdd.Raise();
+                }
+                else
+                {
+                    textBoxResult.AppendText("не хватает данных" + Environment.NewLine);
+                }
+            }
+
+            //TaskDialog.Show("1", buttonFamily.Text + " <-|-> "+ buttonParameter.Text);
+            //Close();
+        }
+        private void ButtonDelete_Click(object sender, EventArgs e)
+        {
+
+            if (PathToFamilyList.Count != 0)
+            {
+                ButtonDeleteExternalEvent.PathToFamilyList = PathToFamilyList;
+                ButtonDeleteExternalEvent.SharedParameter = buttonParameter.Text;
+
+                if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
+                {
+                    ExternalEventButtonDelete.Raise();
+                }
+                else
+                {
+                    textBoxResult.AppendText("не хватает данных" + Environment.NewLine);
+                }
+            }
+
+            //string str = "";
+            //foreach(var path in PathToFamilyList)
+            //{
+            //    str += path + "\n";
+            //}
+            //System.Windows.Forms.MessageBox.Show(str);
+        }
+        private void ButtonHead_Click(object sender, EventArgs e)
+        {
+            WindowHelp windowHelp = new WindowHelp();
+            windowHelp.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            windowHelp.Topmost = true;
+            windowHelp.Show();
+        }
+        private void TreeViewFolders_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
             if ((e.State & TreeNodeStates.Selected) == TreeNodeStates.Selected)
             {
@@ -62,10 +120,43 @@ namespace BatchAddingParameters
                     penBounds.Height -= 1;
                     e.Graphics.DrawRectangle(pen, penBounds);
                 }
-                string selectedFamily = e.Node.Text;
-                if (selectedFamily.Contains(".rfa"))
+                string selectedNoteText = e.Node.Text;
+
+                bool selectedNoteTextIsFolder = false;
+                bool selectedNoteTextIsFamily = false;
+                if (selectedNoteText.Contains(".rfa")) selectedNoteTextIsFamily = true;
+                if (!selectedNoteText.Contains(".")) selectedNoteTextIsFolder = true;
+                if (selectedNoteTextIsFolder)
                 {
-                    //buttonFamily.Text = e.Node.Text;
+                    PathToFamilyList.Clear();
+                    bool isNodeHasParent = false;
+                    StringBuilder path = new StringBuilder();
+                    var node = e.Node;
+                    path.Append(node.Text);
+                    TreeNode nodePrevios = null;
+                    do
+                    {
+                        nodePrevios = node.Parent;
+                        if (nodePrevios != null)
+                        {
+                            isNodeHasParent = true;
+                            path.Insert(0, nodePrevios.Text + @"\");
+                        }
+                        else
+                        {
+                            isNodeHasParent = false;
+                        }
+                        node = nodePrevios;
+                    }
+                    while (isNodeHasParent);
+                    path.Replace(treeViewFamilies.Nodes[0].Text, "");
+                    string buttonText = MainCommand.DirectoryTreeStartDirectory + path.ToString();
+                    buttonFamily.Text = buttonText;
+                    AddPathsToPathToFamilyList(buttonText);
+                }
+                if (selectedNoteTextIsFamily)
+                {
+                    PathToFamilyList.Clear();
                     bool isNodeHasParent = false;
                     StringBuilder path = new StringBuilder();
                     var node = e.Node;
@@ -87,15 +178,15 @@ namespace BatchAddingParameters
                     }
                     while (isNodeHasParent);
                     path.Replace(treeViewFamilies.Nodes[0].Text, "");
-                    buttonFamily.Text = CommandForAddingParameters.DirectoryTreeStartDirectory + path.ToString();
+                    string buttonText = MainCommand.DirectoryTreeStartDirectory + path.ToString();
+                    buttonFamily.Text = buttonText;
+                    PathToFamilyList.Add(buttonText);
                 }
-                    
             }
             else
             {
                 e.DrawDefault = true;
             }
-
         }
         private void TreeViewParameters_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
@@ -158,7 +249,7 @@ namespace BatchAddingParameters
         }
         private Font GetTreeNodeFont(TreeNode node)
         {
-            Font font = new System.Drawing.Font("Arial", 12, System.Drawing.FontStyle.Regular);
+            Font font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Regular);
             Font nodeFont = node.NodeFont;
             if (nodeFont == null)
             {
@@ -186,32 +277,10 @@ namespace BatchAddingParameters
 
             return nodeForeColor;
         }
-
-        private void ButtonAction_Click(object sender, EventArgs e)
-        {
-            ButtonExternalEvent.PathToFamily = buttonFamily.Text;
-            ButtonExternalEvent.SharedParameter = buttonParameter.Text;
-            ButtonExternalEvent.IsInstance = checkBoxInstance.Checked;
-
-            if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
-            {
-                ExternalEvent.Raise();
-            }
-            else
-            {
-                textBoxResult.Text += "не хватает данных" + Environment.NewLine;
-            }
-            //TaskDialog.Show("1", buttonFamily.Text + " <-|-> "+ buttonParameter.Text);
-            
-            
-            //Close();
-        }
-
         private void ComboBoxGroup_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ButtonExternalEvent.PGGroup = GetPGGroup(comboBoxGroup.Text);   
+            ButtonAddExternalEvent.PGGroup = GetPGGroup(comboBoxGroup.Text);   
         }
-
         public BuiltInParameterGroup GetPGGroup(string insert)
         {
             if (insert == "Моменты") return BuiltInParameterGroup.PG_MOMENTS;
@@ -258,41 +327,43 @@ namespace BatchAddingParameters
 
             return BuiltInParameterGroup.INVALID;
         }
-
         private void CheckBoxInstance_CheckedChanged(object sender, EventArgs e)
         {
-            ButtonExternalEvent.IsInstance = checkBoxInstance.Checked;
+            ButtonAddExternalEvent.IsInstance = checkBoxInstance.Checked;
         }
-
-        private void buttonDelete_Click(object sender, EventArgs e)
+        public static void AddPathsToPathToFamilyList(string targetDirectory)
         {
-            ButtonDeleteExternalEvent.PathToFamily = buttonFamily.Text;
-            ButtonDeleteExternalEvent.SharedParameter = buttonParameter.Text;
+            string[] fileEntries = Directory.GetFiles(targetDirectory);
+            foreach (string fileName in fileEntries)
+            {
+                if (fileName.Contains(".rfa"))
+                {
+                    PathToFamilyList.Add(fileName);
+                }
+            }
 
-            if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
-            {
-                ExternalEventButtonDelete.Raise();
-            }
-            else
-            {
-                textBoxResult.Text += "не хватает данных" + Environment.NewLine;
-            }
+            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            foreach (string subdirectory in subdirectoryEntries)
+                AddPathsToPathToFamilyList(subdirectory);
         }
     }
 
-    public class ButtonExternalEvent : IExternalEventHandler
+    public class ButtonAddExternalEvent : IExternalEventHandler
     {
-        public static FormForAddingParameter FormForAddingParameter;
+        public static MainForm MainForm;
         public static ExternalCommandData CommandData;
-        public static string PathToFamily;
+        public static List<string> PathToFamilyList;
         public static string SharedParameter;
         public static bool IsInstance;
         public static BuiltInParameterGroup PGGroup;
         public void Execute(UIApplication uiApp)
         {
-            var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
-            var resultText = AddSharedParameterInFamily(CommandData, doc, SharedParameter, IsInstance, PGGroup);
-            FormForAddingParameter.textBoxResult.Text += resultText + Environment.NewLine;
+            foreach (string PathToFamily in PathToFamilyList)
+            {
+                var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+                var resultText = AddSharedParameterIntoFamily(CommandData, doc, SharedParameter, IsInstance, PGGroup);
+                MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+            }
 
             /*
             MessageBox.Show(
@@ -329,7 +400,7 @@ namespace BatchAddingParameters
 
             return outputGroupName;
         }
-        private string AddSharedParameterInFamily(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance, BuiltInParameterGroup group)
+        private string AddSharedParameterIntoFamily(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance, BuiltInParameterGroup group)
         {
             string str = "";
             if (!doc.IsFamilyDocument) return "не семейство";
@@ -365,44 +436,57 @@ namespace BatchAddingParameters
                     Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
                     ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
                     FamilyParameter familyParameter = familyManager.AddParameter(externalDefinition, group, isInstance);
-                    str = familyParameter.Definition.Name + " был успешно добавлен в семейство " + doc.Title + ".rfa";
+                    str = "+ " + familyParameter.Definition.Name + " был успешно добавлен в семейство " + doc.Title + ".rfa";
                     t.Commit();
                 }
 
             }
             catch (Exception e)
             {
-                using (Transaction t = new Transaction(doc, "Something happen"))
-                {
-                    t.Start();
-                    DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
-                    DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
-                    Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
-                    ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
-                    str = sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
-                    t.Commit();
-                }
-                
+                //using (Transaction t = new Transaction(doc, "Something happen"))
+                //{
+                //    t.Start();
+                    //DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
+                    //DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
+                    //Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
+                    //ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
+                    //str = sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
+                //    t.Commit();
+                //}
+                str = "! " + sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
                 //TaskDialog.Show("!", e.ToString());
             }
             doc.Save();
+            string docDir = Path.GetDirectoryName(doc.PathName);
             doc.Close();
+            try
+            {
+                string[] fileEntries = Directory.GetFiles(docDir, "*.0???.rfa");
+                foreach (string fileName in fileEntries)
+                    File.Delete(fileName);
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.ToString());
+            }
             return str;
         }
-        
+
     }
     public class ButtonDeleteExternalEvent : IExternalEventHandler
     {
-        public static string PathToFamily;
-        public static FormForAddingParameter FormForAddingParameter;
+        public static List<string> PathToFamilyList;
+        public static MainForm MainForm;
         public static ExternalCommandData CommandData;
         public static string SharedParameter;
         public void Execute(UIApplication app)
         {
-            var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
-            var resultText = DeleteSharedParameterFromFamily(CommandData, doc, SharedParameter);
-            //MessageBox.Show("Ops");
-            FormForAddingParameter.textBoxResult.Text += resultText + Environment.NewLine;
+            foreach (string PathToFamily in PathToFamilyList)
+            {
+                var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+                var resultText = DeleteSharedParameterFromFamily(CommandData, doc, SharedParameter);
+                MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+            }
             return;
         }
 
@@ -410,65 +494,94 @@ namespace BatchAddingParameters
         {
             return "External Delete Event";
         }
-        private string DeleteSharedParameterFromFamily(ExternalCommandData commandData, Document doc, string sharedParameter)
+        private string DeleteSharedParameterFromFamily(ExternalCommandData commandData, Document doc, string sharedParameterName)
         {
-            if (doc.IsFamilyDocument)
+            string str = "";
+            if (!doc.IsFamilyDocument) return "не семейство";
+
+            FamilyManager familyManager = doc.FamilyManager;
+            FamilyType familyType;
+            familyType = familyManager.CurrentType;
+            if (familyType == null)
             {
-                FamilyManager familyManager = doc.FamilyManager;
-                FamilyType familyType;
-                familyType = familyManager.CurrentType;
-                if (familyType == null)
+                using (Transaction t = new Transaction(doc, "change"))
                 {
-                    using (Transaction t = new Transaction(doc, "change"))
-                    {
-                        t.Start();
-                        familyType = familyManager.NewType("Тип 1");
-                        familyManager.CurrentType = familyType;
-                        t.Commit();
-                    }
+                    t.Start();
+                    familyType = familyManager.NewType("Тип 1");
+                    familyManager.CurrentType = familyType;
+                    t.Commit();
                 }
-
-                #region clear 
-                //TaskDialog.Show("Warning", "Privet");
-                try
-                {
-                    commandData.Application.Application.SharedParametersFilename = CommandForAddingParameters.FOPPath;
-                    using (Transaction t = new Transaction(doc, "Clear"))
-                    {
-                        t.Start();
-                        FamilyParameterSet parametersList = familyManager.Parameters;
-
-
-                            try
-                            {
-                                //var p = familyManager.get_Parameter(new Guid(guid));
-                                familyManager.RemoveParameter(p);
-                            }
-                            catch
-                            {
-
-                            }
-
-
-                        t.Commit();
-                    }
-                }
-                catch (Exception e)
-                {
-                    TaskDialog.Show("Warning 1", e.ToString());
-                }
-
-                #endregion
-
             }
-            else
+
+            #region clear 
+            //TaskDialog.Show("Warning", "Privet");
+            try
             {
-                TaskDialog.Show("Warning main", "Это не семейство, команда работает только в семействе");
+                commandData.Application.Application.SharedParametersFilename = MainCommand.FOPPath;
+                using (Transaction t = new Transaction(doc, "Clear"))
+                {
+                    t.Start();
+                    FamilyParameterSet parametersList = familyManager.Parameters;
+
+                    try
+                    {
+                        DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
+                        DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
+                        Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
+                        ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
+
+                        var p = familyManager.get_Parameter(externalDefinition.GUID);
+                        familyManager.RemoveParameter(p);
+
+                        str = "- " + sharedParameterName + " был успешно удален из семейства " + doc.Title + ".rfa";
+                    }
+                    catch
+                    {
+                        str = "! " + sharedParameterName + " отсутсвует в семействе " + doc.Title + ".rfa";
+                    }
+
+
+                    t.Commit();
+                }
             }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Warning 1", e.ToString());
+            }
+
+            #endregion
 
             doc.Save();
+            string docDir = Path.GetDirectoryName(doc.PathName);
             doc.Close();
-            return "не реализовано";
+            try
+            {
+                string[] fileEntries = Directory.GetFiles(docDir, "*.0???.rfa");
+                foreach (string fileName in fileEntries)
+                    File.Delete(fileName);
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.ToString());
+            }
+            return str;
+        }
+        private string GroupNameBySharedParameterName(ExternalCommandData commandData, string sharedParameterName)
+        {
+            string outputGroupName = "";
+
+            DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
+            DefinitionGroups definitionGroups = sharedParametersFile.Groups;
+            foreach (DefinitionGroup definitionGroup in definitionGroups)
+            {
+                foreach (Definition definition in definitionGroup.Definitions)
+                {
+                    if (definition.Name == sharedParameterName)
+                        outputGroupName = definitionGroup.Name;
+                }
+            }
+
+            return outputGroupName;
         }
     }
 }
