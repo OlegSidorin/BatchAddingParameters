@@ -17,7 +17,7 @@ namespace BatchAddingParameters
     [Transaction(TransactionMode.Manual), Regeneration(RegenerationOption.Manual)]
     class MainCommand : IExternalCommand
     {
-        public static string DirectoryTreeStartDirectory = @"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств"; //@"C:\Users\o.sidorin\Downloads";
+        public static string DirectoryTreeStartDirectory =  @"C:\Users\" + Environment.UserName; //@"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств";
         public static string FOPPath { get; set; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\res\\ФОП2019.txt";
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
@@ -37,7 +37,7 @@ namespace BatchAddingParameters
             foreach (string groupName in groupNamesInFOP)
             {
                 mainForm.treeViewParameters.Nodes.Add(groupName);
-                mainForm.treeViewParameters.Nodes[z].NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
+                mainForm.treeViewParameters.Nodes[z].NodeFont = new System.Drawing.Font("Segoe UI Light", 10);
                 z += 1;
             }
             
@@ -49,7 +49,7 @@ namespace BatchAddingParameters
                 foreach (string item in items)
                 {
                     mainForm.treeViewParameters.Nodes[i].Nodes.Add(item);
-                    mainForm.treeViewParameters.Nodes[i].Nodes[j].NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Regular);
+                    mainForm.treeViewParameters.Nodes[i].Nodes[j].NodeFont = new System.Drawing.Font("Segoe UI Light", 10);
                     j += 1;
                 }
                 i += 1;
@@ -109,6 +109,10 @@ namespace BatchAddingParameters
             mainForm.comboBoxGroup.Items.Add("Свойства экологически чистого здания");
 
             mainForm.comboBoxGroup.SelectedIndex = 0;
+
+            mainForm.comboBoxStartFolder.Items.Add(@"C:\Users\" + Environment.UserName); //@"\Downloads"
+            mainForm.comboBoxStartFolder.Items.Add(@"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств");
+            mainForm.comboBoxStartFolder.SelectedIndex = 0;
             #endregion
 
             ButtonAddExternalEvent.MainForm = mainForm;
@@ -176,7 +180,7 @@ namespace BatchAddingParameters
             }
             return output;
         }
-        private static void ListDirectory(TreeView treeView, string path)
+        public static void ListDirectory(TreeView treeView, string path)
         {
             treeView.Nodes.Clear();
 
@@ -197,11 +201,15 @@ namespace BatchAddingParameters
                 }
                 foreach (var file in directoryInfo.GetFiles())
                 {
-                    currentNode.Nodes.Add(new TreeNode(file.Name));
+                    if (file.Name.Contains(".rfa"))
+                    {
+                        currentNode.Nodes.Add(new TreeNode(file.Name));
+                    }
+                    
                 }
                     
             }
-            node.NodeFont = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
+            node.NodeFont = new System.Drawing.Font("Segoe UI Light", 10);
             treeView.Nodes.Add(node);
 
         }

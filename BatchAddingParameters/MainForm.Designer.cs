@@ -32,16 +32,23 @@ namespace BatchAddingParameters
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.buttonHead = new System.Windows.Forms.Button();
+            this.labelHead = new System.Windows.Forms.Label();
+            this.buttonHelp = new System.Windows.Forms.Button();
+            this.splitContainer12 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer13 = new System.Windows.Forms.SplitContainer();
+            this.labelChooseParameter = new System.Windows.Forms.Label();
+            this.labelChooseFamily = new System.Windows.Forms.Label();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.treeViewParameters = new System.Windows.Forms.TreeView();
+            this.splitContainer11 = new System.Windows.Forms.SplitContainer();
+            this.comboBoxStartFolder = new System.Windows.Forms.ComboBox();
             this.treeViewFamilies = new System.Windows.Forms.TreeView();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.labelParameter = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.buttonParameter = new System.Windows.Forms.Button();
+            this.labelFamily = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.buttonFamily = new System.Windows.Forms.Button();
             this.splitContainer6 = new System.Windows.Forms.SplitContainer();
             this.splitContainer7 = new System.Windows.Forms.SplitContainer();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
@@ -49,6 +56,8 @@ namespace BatchAddingParameters
             this.checkBoxInstance = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.comboBoxGroup = new System.Windows.Forms.ComboBox();
+            this.checkBoxSubfolders = new System.Windows.Forms.CheckBox();
+            this.splitContainer10 = new System.Windows.Forms.SplitContainer();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.textBoxResult = new System.Windows.Forms.TextBox();
@@ -60,10 +69,22 @@ namespace BatchAddingParameters
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer12)).BeginInit();
+            this.splitContainer12.Panel1.SuspendLayout();
+            this.splitContainer12.Panel2.SuspendLayout();
+            this.splitContainer12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer13)).BeginInit();
+            this.splitContainer13.Panel1.SuspendLayout();
+            this.splitContainer13.Panel2.SuspendLayout();
+            this.splitContainer13.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer11)).BeginInit();
+            this.splitContainer11.Panel1.SuspendLayout();
+            this.splitContainer11.Panel2.SuspendLayout();
+            this.splitContainer11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
@@ -88,11 +109,14 @@ namespace BatchAddingParameters
             this.splitContainer9.Panel1.SuspendLayout();
             this.splitContainer9.Panel2.SuspendLayout();
             this.splitContainer9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer10)).BeginInit();
+            this.splitContainer10.Panel1.SuspendLayout();
+            this.splitContainer10.Panel2.SuspendLayout();
+            this.splitContainer10.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
             // 
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
@@ -108,7 +132,7 @@ namespace BatchAddingParameters
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer1.Size = new System.Drawing.Size(1384, 1204);
-            this.splitContainer1.SplitterDistance = 686;
+            this.splitContainer1.SplitterDistance = 738;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
@@ -121,30 +145,105 @@ namespace BatchAddingParameters
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.BackColor = System.Drawing.Color.White;
-            this.splitContainer2.Panel1.Controls.Add(this.buttonHead);
+            this.splitContainer2.Panel1.BackColor = System.Drawing.Color.Transparent;
+            this.splitContainer2.Panel1.Controls.Add(this.labelHead);
+            this.splitContainer2.Panel1.Controls.Add(this.buttonHelp);
             this.splitContainer2.Panel1.Padding = new System.Windows.Forms.Padding(8);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(1382, 684);
-            this.splitContainer2.SplitterDistance = 88;
+            this.splitContainer2.Panel2.Controls.Add(this.splitContainer12);
+            this.splitContainer2.Size = new System.Drawing.Size(1384, 738);
+            this.splitContainer2.SplitterDistance = 94;
             this.splitContainer2.TabIndex = 1;
             // 
-            // buttonHead
+            // labelHead
             // 
-            this.buttonHead.BackColor = System.Drawing.Color.Snow;
-            this.buttonHead.Cursor = System.Windows.Forms.Cursors.PanSouth;
-            this.buttonHead.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHead.Font = new System.Drawing.Font("Arial", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonHead.Location = new System.Drawing.Point(8, 8);
-            this.buttonHead.Name = "buttonHead";
-            this.buttonHead.Size = new System.Drawing.Size(1366, 72);
-            this.buttonHead.TabIndex = 0;
-            this.buttonHead.Text = "Выбрать параметр из ФОП и выбрать семейство";
-            this.buttonHead.UseVisualStyleBackColor = false;
-            this.buttonHead.Click += new System.EventHandler(this.ButtonHead_Click);
+            this.labelHead.BackColor = System.Drawing.Color.Transparent;
+            this.labelHead.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelHead.Font = new System.Drawing.Font("Segoe UI Light", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelHead.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.labelHead.Location = new System.Drawing.Point(8, 8);
+            this.labelHead.Name = "labelHead";
+            this.labelHead.Size = new System.Drawing.Size(1244, 78);
+            this.labelHead.TabIndex = 1;
+            this.labelHead.Text = "Добавить параметр в семейства";
+            this.labelHead.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // buttonHelp
+            // 
+            this.buttonHelp.BackColor = System.Drawing.Color.NavajoWhite;
+            this.buttonHelp.Cursor = System.Windows.Forms.Cursors.Help;
+            this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Right;
+            this.buttonHelp.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonHelp.Location = new System.Drawing.Point(1252, 8);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(124, 78);
+            this.buttonHelp.TabIndex = 0;
+            this.buttonHelp.Text = "Справка";
+            this.buttonHelp.UseVisualStyleBackColor = false;
+            this.buttonHelp.Click += new System.EventHandler(this.ButtonHelp_Click);
+            // 
+            // splitContainer12
+            // 
+            this.splitContainer12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer12.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer12.Name = "splitContainer12";
+            this.splitContainer12.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer12.Panel1
+            // 
+            this.splitContainer12.Panel1.Controls.Add(this.splitContainer13);
+            // 
+            // splitContainer12.Panel2
+            // 
+            this.splitContainer12.Panel2.Controls.Add(this.splitContainer3);
+            this.splitContainer12.Size = new System.Drawing.Size(1384, 640);
+            this.splitContainer12.SplitterDistance = 47;
+            this.splitContainer12.TabIndex = 2;
+            // 
+            // splitContainer13
+            // 
+            this.splitContainer13.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer13.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer13.Name = "splitContainer13";
+            // 
+            // splitContainer13.Panel1
+            // 
+            this.splitContainer13.Panel1.Controls.Add(this.labelChooseParameter);
+            // 
+            // splitContainer13.Panel2
+            // 
+            this.splitContainer13.Panel2.Controls.Add(this.labelChooseFamily);
+            this.splitContainer13.Panel2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.splitContainer13.Size = new System.Drawing.Size(1384, 47);
+            this.splitContainer13.SplitterDistance = 668;
+            this.splitContainer13.TabIndex = 0;
+            // 
+            // labelChooseParameter
+            // 
+            this.labelChooseParameter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelChooseParameter.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelChooseParameter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.labelChooseParameter.Location = new System.Drawing.Point(0, 0);
+            this.labelChooseParameter.Name = "labelChooseParameter";
+            this.labelChooseParameter.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.labelChooseParameter.Size = new System.Drawing.Size(668, 47);
+            this.labelChooseParameter.TabIndex = 0;
+            this.labelChooseParameter.Text = "Выбрать параметр:";
+            this.labelChooseParameter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // labelChooseFamily
+            // 
+            this.labelChooseFamily.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelChooseFamily.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelChooseFamily.Location = new System.Drawing.Point(0, 0);
+            this.labelChooseFamily.Name = "labelChooseFamily";
+            this.labelChooseFamily.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.labelChooseFamily.Size = new System.Drawing.Size(712, 47);
+            this.labelChooseFamily.TabIndex = 0;
+            this.labelChooseFamily.Text = "Выбрать семейства:";
+            this.labelChooseFamily.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // splitContainer3
             // 
@@ -159,9 +258,9 @@ namespace BatchAddingParameters
             // 
             // splitContainer3.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.treeViewFamilies);
+            this.splitContainer3.Panel2.Controls.Add(this.splitContainer11);
             this.splitContainer3.Panel2.Padding = new System.Windows.Forms.Padding(8);
-            this.splitContainer3.Size = new System.Drawing.Size(1382, 592);
+            this.splitContainer3.Size = new System.Drawing.Size(1384, 589);
             this.splitContainer3.SplitterDistance = 668;
             this.splitContainer3.TabIndex = 1;
             // 
@@ -169,22 +268,52 @@ namespace BatchAddingParameters
             // 
             this.treeViewParameters.BackColor = System.Drawing.Color.Snow;
             this.treeViewParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewParameters.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.treeViewParameters.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.treeViewParameters.Location = new System.Drawing.Point(8, 8);
-            this.treeViewParameters.Margin = new System.Windows.Forms.Padding(15);
+            this.treeViewParameters.Margin = new System.Windows.Forms.Padding(25);
             this.treeViewParameters.Name = "treeViewParameters";
             this.treeViewParameters.ShowNodeToolTips = true;
-            this.treeViewParameters.Size = new System.Drawing.Size(652, 576);
+            this.treeViewParameters.Size = new System.Drawing.Size(652, 573);
             this.treeViewParameters.TabIndex = 0;
+            // 
+            // splitContainer11
+            // 
+            this.splitContainer11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer11.Location = new System.Drawing.Point(8, 8);
+            this.splitContainer11.Name = "splitContainer11";
+            this.splitContainer11.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer11.Panel1
+            // 
+            this.splitContainer11.Panel1.Controls.Add(this.comboBoxStartFolder);
+            // 
+            // splitContainer11.Panel2
+            // 
+            this.splitContainer11.Panel2.Controls.Add(this.treeViewFamilies);
+            this.splitContainer11.Size = new System.Drawing.Size(696, 573);
+            this.splitContainer11.SplitterDistance = 45;
+            this.splitContainer11.TabIndex = 2;
+            // 
+            // comboBoxStartFolder
+            // 
+            this.comboBoxStartFolder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxStartFolder.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.comboBoxStartFolder.FormattingEnabled = true;
+            this.comboBoxStartFolder.Location = new System.Drawing.Point(0, 0);
+            this.comboBoxStartFolder.Name = "comboBoxStartFolder";
+            this.comboBoxStartFolder.Size = new System.Drawing.Size(696, 36);
+            this.comboBoxStartFolder.TabIndex = 1;
+            this.comboBoxStartFolder.SelectedIndexChanged += new System.EventHandler(this.ComboBoxStartFolder_SelectedIndexChanged);
             // 
             // treeViewFamilies
             // 
             this.treeViewFamilies.BackColor = System.Drawing.Color.Snow;
             this.treeViewFamilies.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewFamilies.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.treeViewFamilies.Location = new System.Drawing.Point(8, 8);
+            this.treeViewFamilies.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.treeViewFamilies.Location = new System.Drawing.Point(0, 0);
+            this.treeViewFamilies.Margin = new System.Windows.Forms.Padding(25);
             this.treeViewFamilies.Name = "treeViewFamilies";
-            this.treeViewFamilies.Size = new System.Drawing.Size(694, 576);
+            this.treeViewFamilies.Size = new System.Drawing.Size(696, 524);
             this.treeViewFamilies.TabIndex = 0;
             // 
             // splitContainer4
@@ -201,8 +330,8 @@ namespace BatchAddingParameters
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer6);
-            this.splitContainer4.Size = new System.Drawing.Size(1382, 512);
-            this.splitContainer4.SplitterDistance = 113;
+            this.splitContainer4.Size = new System.Drawing.Size(1384, 462);
+            this.splitContainer4.SplitterDistance = 76;
             this.splitContainer4.TabIndex = 1;
             // 
             // splitContainer5
@@ -213,60 +342,68 @@ namespace BatchAddingParameters
             // 
             // splitContainer5.Panel1
             // 
+            this.splitContainer5.Panel1.Controls.Add(this.labelParameter);
             this.splitContainer5.Panel1.Controls.Add(this.label1);
-            this.splitContainer5.Panel1.Controls.Add(this.buttonParameter);
             this.splitContainer5.Panel1.Padding = new System.Windows.Forms.Padding(8);
             // 
             // splitContainer5.Panel2
             // 
+            this.splitContainer5.Panel2.Controls.Add(this.labelFamily);
             this.splitContainer5.Panel2.Controls.Add(this.label2);
-            this.splitContainer5.Panel2.Controls.Add(this.buttonFamily);
             this.splitContainer5.Panel2.Padding = new System.Windows.Forms.Padding(8);
-            this.splitContainer5.Size = new System.Drawing.Size(1382, 113);
+            this.splitContainer5.Size = new System.Drawing.Size(1384, 76);
             this.splitContainer5.SplitterDistance = 668;
             this.splitContainer5.TabIndex = 0;
+            // 
+            // labelParameter
+            // 
+            this.labelParameter.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labelParameter.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelParameter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.labelParameter.Location = new System.Drawing.Point(8, 36);
+            this.labelParameter.Name = "labelParameter";
+            this.labelParameter.Padding = new System.Windows.Forms.Padding(16, 0, 0, 0);
+            this.labelParameter.Size = new System.Drawing.Size(649, 32);
+            this.labelParameter.TabIndex = 3;
+            this.labelParameter.Text = "-";
+            this.labelParameter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label1
             // 
             this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label1.Location = new System.Drawing.Point(8, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(652, 25);
+            this.label1.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.label1.Size = new System.Drawing.Size(652, 28);
             this.label1.TabIndex = 1;
             this.label1.Text = "Выбран параметр:";
             // 
-            // buttonParameter
+            // labelFamily
             // 
-            this.buttonParameter.BackColor = System.Drawing.Color.Snow;
-            this.buttonParameter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.buttonParameter.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonParameter.Location = new System.Drawing.Point(8, 35);
-            this.buttonParameter.Name = "buttonParameter";
-            this.buttonParameter.Size = new System.Drawing.Size(652, 70);
-            this.buttonParameter.TabIndex = 0;
-            this.buttonParameter.UseVisualStyleBackColor = false;
+            this.labelFamily.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labelFamily.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelFamily.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.labelFamily.Location = new System.Drawing.Point(8, 36);
+            this.labelFamily.Name = "labelFamily";
+            this.labelFamily.Padding = new System.Windows.Forms.Padding(16, 0, 0, 0);
+            this.labelFamily.Size = new System.Drawing.Size(691, 32);
+            this.labelFamily.TabIndex = 2;
+            this.labelFamily.Text = "-";
+            this.labelFamily.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label2
             // 
             this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label2.Location = new System.Drawing.Point(8, 8);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(694, 25);
+            this.label2.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.label2.Size = new System.Drawing.Size(696, 28);
             this.label2.TabIndex = 1;
             this.label2.Text = "Выбрано семейство или папка с семействами:";
-            // 
-            // buttonFamily
-            // 
-            this.buttonFamily.BackColor = System.Drawing.Color.Snow;
-            this.buttonFamily.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.buttonFamily.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonFamily.Location = new System.Drawing.Point(8, 35);
-            this.buttonFamily.Name = "buttonFamily";
-            this.buttonFamily.Size = new System.Drawing.Size(694, 70);
-            this.buttonFamily.TabIndex = 0;
-            this.buttonFamily.UseVisualStyleBackColor = false;
             // 
             // splitContainer6
             // 
@@ -283,8 +420,8 @@ namespace BatchAddingParameters
             // 
             this.splitContainer6.Panel2.Controls.Add(this.textBoxResult);
             this.splitContainer6.Panel2.Padding = new System.Windows.Forms.Padding(8);
-            this.splitContainer6.Size = new System.Drawing.Size(1382, 395);
-            this.splitContainer6.SplitterDistance = 169;
+            this.splitContainer6.Size = new System.Drawing.Size(1384, 382);
+            this.splitContainer6.SplitterDistance = 168;
             this.splitContainer6.TabIndex = 1;
             // 
             // splitContainer7
@@ -300,10 +437,9 @@ namespace BatchAddingParameters
             // 
             // splitContainer7.Panel2
             // 
-            this.splitContainer7.Panel2.Controls.Add(this.buttonAdd);
-            this.splitContainer7.Panel2.Padding = new System.Windows.Forms.Padding(8);
-            this.splitContainer7.Size = new System.Drawing.Size(1382, 169);
-            this.splitContainer7.SplitterDistance = 77;
+            this.splitContainer7.Panel2.Controls.Add(this.splitContainer10);
+            this.splitContainer7.Size = new System.Drawing.Size(1384, 168);
+            this.splitContainer7.SplitterDistance = 92;
             this.splitContainer7.TabIndex = 1;
             // 
             // splitContainer8
@@ -318,9 +454,9 @@ namespace BatchAddingParameters
             // 
             // splitContainer8.Panel2
             // 
-            this.splitContainer8.Panel2.Controls.Add(this.buttonDelete);
+            this.splitContainer8.Panel2.Controls.Add(this.checkBoxSubfolders);
             this.splitContainer8.Panel2.Padding = new System.Windows.Forms.Padding(8);
-            this.splitContainer8.Size = new System.Drawing.Size(1382, 77);
+            this.splitContainer8.Size = new System.Drawing.Size(1384, 92);
             this.splitContainer8.SplitterDistance = 668;
             this.splitContainer8.TabIndex = 1;
             // 
@@ -340,31 +476,31 @@ namespace BatchAddingParameters
             this.splitContainer9.Panel2.Controls.Add(this.label3);
             this.splitContainer9.Panel2.Controls.Add(this.comboBoxGroup);
             this.splitContainer9.Panel2.Padding = new System.Windows.Forms.Padding(8);
-            this.splitContainer9.Size = new System.Drawing.Size(668, 77);
+            this.splitContainer9.Size = new System.Drawing.Size(668, 92);
             this.splitContainer9.SplitterDistance = 241;
             this.splitContainer9.TabIndex = 1;
             // 
             // checkBoxInstance
             // 
-            this.checkBoxInstance.AutoSize = true;
             this.checkBoxInstance.Cursor = System.Windows.Forms.Cursors.Default;
             this.checkBoxInstance.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxInstance.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.checkBoxInstance.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.checkBoxInstance.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.checkBoxInstance.Location = new System.Drawing.Point(8, 8);
             this.checkBoxInstance.Name = "checkBoxInstance";
-            this.checkBoxInstance.Padding = new System.Windows.Forms.Padding(12, 0, 0, 0);
+            this.checkBoxInstance.Padding = new System.Windows.Forms.Padding(26, 0, 0, 0);
             this.checkBoxInstance.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.checkBoxInstance.Size = new System.Drawing.Size(225, 61);
+            this.checkBoxInstance.Size = new System.Drawing.Size(225, 76);
             this.checkBoxInstance.TabIndex = 0;
             this.checkBoxInstance.Text = "Экземпляр";
-            this.checkBoxInstance.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxInstance.UseVisualStyleBackColor = true;
             this.checkBoxInstance.CheckedChanged += new System.EventHandler(this.CheckBoxInstance_CheckedChanged);
             // 
             // label3
             // 
             this.label3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label3.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label3.Location = new System.Drawing.Point(8, 8);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(407, 28);
@@ -374,39 +510,72 @@ namespace BatchAddingParameters
             // comboBoxGroup
             // 
             this.comboBoxGroup.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.comboBoxGroup.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.comboBoxGroup.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.comboBoxGroup.FormattingEnabled = true;
-            this.comboBoxGroup.Location = new System.Drawing.Point(8, 38);
+            this.comboBoxGroup.Location = new System.Drawing.Point(8, 48);
             this.comboBoxGroup.Name = "comboBoxGroup";
-            this.comboBoxGroup.Size = new System.Drawing.Size(407, 31);
+            this.comboBoxGroup.Size = new System.Drawing.Size(407, 36);
             this.comboBoxGroup.TabIndex = 1;
             this.comboBoxGroup.SelectedIndexChanged += new System.EventHandler(this.ComboBoxGroup_SelectedIndexChanged);
             // 
+            // checkBoxSubfolders
+            // 
+            this.checkBoxSubfolders.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxSubfolders.Font = new System.Drawing.Font("Segoe UI Light", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.checkBoxSubfolders.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.checkBoxSubfolders.Location = new System.Drawing.Point(8, 8);
+            this.checkBoxSubfolders.Name = "checkBoxSubfolders";
+            this.checkBoxSubfolders.Padding = new System.Windows.Forms.Padding(26, 0, 0, 0);
+            this.checkBoxSubfolders.Size = new System.Drawing.Size(696, 76);
+            this.checkBoxSubfolders.TabIndex = 0;
+            this.checkBoxSubfolders.Text = "Подпапки";
+            this.checkBoxSubfolders.UseVisualStyleBackColor = true;
+            this.checkBoxSubfolders.CheckedChanged += new System.EventHandler(this.CheckBoxSubfolders_CheckedChanged);
+            // 
+            // splitContainer10
+            // 
+            this.splitContainer10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer10.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer10.Name = "splitContainer10";
+            // 
+            // splitContainer10.Panel1
+            // 
+            this.splitContainer10.Panel1.Controls.Add(this.buttonDelete);
+            this.splitContainer10.Panel1.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            // 
+            // splitContainer10.Panel2
+            // 
+            this.splitContainer10.Panel2.Controls.Add(this.buttonAdd);
+            this.splitContainer10.Panel2.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.splitContainer10.Size = new System.Drawing.Size(1384, 72);
+            this.splitContainer10.SplitterDistance = 668;
+            this.splitContainer10.TabIndex = 1;
+            // 
             // buttonDelete
             // 
-            this.buttonDelete.BackColor = System.Drawing.Color.LightCoral;
-            this.buttonDelete.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.buttonDelete.BackColor = System.Drawing.Color.NavajoWhite;
+            this.buttonDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonDelete.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonDelete.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.buttonDelete.ForeColor = System.Drawing.Color.Black;
-            this.buttonDelete.Location = new System.Drawing.Point(8, 8);
+            this.buttonDelete.Location = new System.Drawing.Point(8, 0);
             this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(694, 61);
+            this.buttonDelete.Size = new System.Drawing.Size(652, 72);
             this.buttonDelete.TabIndex = 0;
-            this.buttonDelete.Text = "Удалить параметр из семейств";
+            this.buttonDelete.Text = "УДАЛИТЬ ПАРАМЕТР ИЗ СЕМЕЙСТВ";
             this.buttonDelete.UseVisualStyleBackColor = false;
             this.buttonDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
             // 
             // buttonAdd
             // 
-            this.buttonAdd.BackColor = System.Drawing.Color.Teal;
+            this.buttonAdd.BackColor = System.Drawing.Color.NavajoWhite;
             this.buttonAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.buttonAdd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonAdd.ForeColor = System.Drawing.Color.LemonChiffon;
-            this.buttonAdd.Location = new System.Drawing.Point(8, 8);
+            this.buttonAdd.Font = new System.Drawing.Font("Segoe UI Light", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonAdd.ForeColor = System.Drawing.Color.Black;
+            this.buttonAdd.Location = new System.Drawing.Point(8, 0);
             this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(1366, 72);
+            this.buttonAdd.Size = new System.Drawing.Size(696, 72);
             this.buttonAdd.TabIndex = 0;
             this.buttonAdd.Text = "ДОБАВИТЬ ПАРАМЕТР В СЕМЕЙСТВА";
             this.buttonAdd.UseMnemonic = false;
@@ -417,19 +586,19 @@ namespace BatchAddingParameters
             // 
             this.textBoxResult.BackColor = System.Drawing.Color.Snow;
             this.textBoxResult.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxResult.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxResult.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.textBoxResult.Location = new System.Drawing.Point(8, 8);
             this.textBoxResult.Multiline = true;
             this.textBoxResult.Name = "textBoxResult";
             this.textBoxResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxResult.Size = new System.Drawing.Size(1366, 206);
+            this.textBoxResult.Size = new System.Drawing.Size(1368, 194);
             this.textBoxResult.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
+            this.BackColor = System.Drawing.Color.SteelBlue;
             this.ClientSize = new System.Drawing.Size(1384, 1204);
             this.Controls.Add(this.splitContainer1);
             this.Font = new System.Drawing.Font("Arial", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -446,10 +615,22 @@ namespace BatchAddingParameters
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.splitContainer12.Panel1.ResumeLayout(false);
+            this.splitContainer12.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer12)).EndInit();
+            this.splitContainer12.ResumeLayout(false);
+            this.splitContainer13.Panel1.ResumeLayout(false);
+            this.splitContainer13.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer13)).EndInit();
+            this.splitContainer13.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            this.splitContainer11.Panel1.ResumeLayout(false);
+            this.splitContainer11.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer11)).EndInit();
+            this.splitContainer11.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
@@ -472,10 +653,13 @@ namespace BatchAddingParameters
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer8)).EndInit();
             this.splitContainer8.ResumeLayout(false);
             this.splitContainer9.Panel1.ResumeLayout(false);
-            this.splitContainer9.Panel1.PerformLayout();
             this.splitContainer9.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer9)).EndInit();
             this.splitContainer9.ResumeLayout(false);
+            this.splitContainer10.Panel1.ResumeLayout(false);
+            this.splitContainer10.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer10)).EndInit();
+            this.splitContainer10.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -488,11 +672,9 @@ namespace BatchAddingParameters
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
         public System.Windows.Forms.TreeView treeViewFamilies;
-        private System.Windows.Forms.Button buttonHead;
+        private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.SplitContainer splitContainer5;
-        public System.Windows.Forms.Button buttonParameter;
-        public System.Windows.Forms.Button buttonFamily;
         private System.Windows.Forms.SplitContainer splitContainer6;
         public System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.SplitContainer splitContainer7;
@@ -504,5 +686,16 @@ namespace BatchAddingParameters
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelHead;
+        public System.Windows.Forms.Label labelParameter;
+        public System.Windows.Forms.Label labelFamily;
+        public System.Windows.Forms.CheckBox checkBoxSubfolders;
+        private System.Windows.Forms.SplitContainer splitContainer10;
+        private System.Windows.Forms.SplitContainer splitContainer11;
+        public System.Windows.Forms.ComboBox comboBoxStartFolder;
+        private System.Windows.Forms.SplitContainer splitContainer12;
+        private System.Windows.Forms.SplitContainer splitContainer13;
+        private System.Windows.Forms.Label labelChooseParameter;
+        private System.Windows.Forms.Label labelChooseFamily;
     }
 }

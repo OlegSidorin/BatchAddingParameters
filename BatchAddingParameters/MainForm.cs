@@ -25,6 +25,8 @@ namespace BatchAddingParameters
         public ButtonDeleteExternalEvent ButtonDeleteExternalEvent;
         public ExternalEvent ExternalEventButtonDelete;
         public static List<string> PathToFamilyList;
+        public static string Parameter;
+        public static string OutputTextFromFoldersTree;
         public MainForm()
         {
             InitializeComponent();
@@ -46,10 +48,10 @@ namespace BatchAddingParameters
             if (PathToFamilyList.Count != 0)
             {
                 ButtonAddExternalEvent.PathToFamilyList = PathToFamilyList;
-                ButtonAddExternalEvent.SharedParameter = buttonParameter.Text;
+                ButtonAddExternalEvent.SharedParameter = Parameter;
                 ButtonAddExternalEvent.IsInstance = checkBoxInstance.Checked;
 
-                if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
+                if ((labelFamily.Text != "") && (labelParameter.Text != ""))
                 {
                     ExternalEventButtonAdd.Raise();
                 }
@@ -68,9 +70,9 @@ namespace BatchAddingParameters
             if (PathToFamilyList.Count != 0)
             {
                 ButtonDeleteExternalEvent.PathToFamilyList = PathToFamilyList;
-                ButtonDeleteExternalEvent.SharedParameter = buttonParameter.Text;
+                ButtonDeleteExternalEvent.SharedParameter = Parameter;
 
-                if ((buttonFamily.Text != "") && (buttonParameter.Text != ""))
+                if ((labelFamily.Text != "") && (labelParameter.Text != ""))
                 {
                     ExternalEventButtonDelete.Raise();
                 }
@@ -87,7 +89,7 @@ namespace BatchAddingParameters
             //}
             //System.Windows.Forms.MessageBox.Show(str);
         }
-        private void ButtonHead_Click(object sender, EventArgs e)
+        private void ButtonHelp_Click(object sender, EventArgs e)
         {
             WindowHelp windowHelp = new WindowHelp();
             windowHelp.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -96,97 +98,117 @@ namespace BatchAddingParameters
         }
         private void TreeViewFolders_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
-            if ((e.State & TreeNodeStates.Selected) == TreeNodeStates.Selected)
+            try
             {
-                Graphics g = e.Graphics;
-                // get node font and node fore color
-                Font nodeFont = GetTreeNodeFont(e.Node);
-                Color nodeForeColor = GetTreeNodeForeColor(e.Node, e.State);
-
-                // fill node background
-                using (SolidBrush brush = new SolidBrush(Color.DarkOliveGreen))
+                if ((e.State & TreeNodeStates.Selected) == TreeNodeStates.Selected)
                 {
-                    e.Graphics.FillRectangle(brush, e.Bounds);
-                }
+                    Graphics g = e.Graphics;
+                    // get node font and node fore color
+                    Font nodeFont = GetTreeNodeFont(e.Node);
+                    Color nodeForeColor = GetTreeNodeForeColor(e.Node, e.State);
 
-                // draw node text
-                TextRenderer.DrawText(e.Graphics, e.Node.Text, nodeFont, e.Bounds, nodeForeColor, TextFormatFlags.Left | TextFormatFlags.Top);
-
-                using (Pen pen = new Pen(nodeForeColor))
-                {
-                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-                    Rectangle penBounds = e.Bounds;
-                    penBounds.Width -= 1;
-                    penBounds.Height -= 1;
-                    e.Graphics.DrawRectangle(pen, penBounds);
-                }
-                string selectedNoteText = e.Node.Text;
-
-                bool selectedNoteTextIsFolder = false;
-                bool selectedNoteTextIsFamily = false;
-                if (selectedNoteText.Contains(".rfa")) selectedNoteTextIsFamily = true;
-                if (!selectedNoteText.Contains(".")) selectedNoteTextIsFolder = true;
-                if (selectedNoteTextIsFolder)
-                {
-                    PathToFamilyList.Clear();
-                    bool isNodeHasParent = false;
-                    StringBuilder path = new StringBuilder();
-                    var node = e.Node;
-                    path.Append(node.Text);
-                    TreeNode nodePrevios = null;
-                    do
+                    // fill node background
+                    using (SolidBrush brush = new SolidBrush(Color.DarkSlateBlue))
                     {
-                        nodePrevios = node.Parent;
-                        if (nodePrevios != null)
-                        {
-                            isNodeHasParent = true;
-                            path.Insert(0, nodePrevios.Text + @"\");
-                        }
-                        else
-                        {
-                            isNodeHasParent = false;
-                        }
-                        node = nodePrevios;
+                        e.Graphics.FillRectangle(brush, e.Bounds);
                     }
-                    while (isNodeHasParent);
-                    path.Replace(treeViewFamilies.Nodes[0].Text, "");
-                    string buttonText = MainCommand.DirectoryTreeStartDirectory + path.ToString();
-                    buttonFamily.Text = buttonText;
-                    AddPathsToPathToFamilyList(buttonText);
-                }
-                if (selectedNoteTextIsFamily)
-                {
-                    PathToFamilyList.Clear();
-                    bool isNodeHasParent = false;
-                    StringBuilder path = new StringBuilder();
-                    var node = e.Node;
-                    path.Append(node.Text);
-                    TreeNode nodePrevios = null;
-                    do
+
+                    // draw node text
+                    TextRenderer.DrawText(e.Graphics, e.Node.Text, nodeFont, e.Bounds, nodeForeColor, TextFormatFlags.Left | TextFormatFlags.Top);
+
+                    using (Pen pen = new Pen(nodeForeColor))
                     {
-                        nodePrevios = node.Parent;
-                        if (nodePrevios != null)
-                        {
-                            isNodeHasParent = true;
-                            path.Insert(0, nodePrevios.Text + @"\");
-                        }
-                        else
-                        {
-                            isNodeHasParent = false;
-                        }
-                        node = nodePrevios;    
+                        pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                        Rectangle penBounds = e.Bounds;
+                        penBounds.Width -= 1;
+                        penBounds.Height -= 1;
+                        e.Graphics.DrawRectangle(pen, penBounds);
                     }
-                    while (isNodeHasParent);
-                    path.Replace(treeViewFamilies.Nodes[0].Text, "");
-                    string buttonText = MainCommand.DirectoryTreeStartDirectory + path.ToString();
-                    buttonFamily.Text = buttonText;
-                    PathToFamilyList.Add(buttonText);
+                    string selectedNoteText = e.Node.Text;
+
+                    bool selectedNoteTextIsFolder = false;
+                    bool selectedNoteTextIsFamily = false;
+                    if (selectedNoteText.Contains(".rfa")) selectedNoteTextIsFamily = true;
+                    if (!selectedNoteText.Contains(".")) selectedNoteTextIsFolder = true;
+                    if (selectedNoteTextIsFolder)
+                    {
+                        PathToFamilyList.Clear();
+                        bool isNodeHasParent = false;
+                        StringBuilder path = new StringBuilder();
+                        var node = e.Node;
+                        path.Append(node.Text);
+                        TreeNode nodePrevios = null;
+                        do
+                        {
+                            nodePrevios = node.Parent;
+                            if (nodePrevios != null)
+                            {
+                                isNodeHasParent = true;
+                                path.Insert(0, nodePrevios.Text + @"\");
+                            }
+                            else
+                            {
+                                isNodeHasParent = false;
+                            }
+                            node = nodePrevios;
+                        }
+                        while (isNodeHasParent);
+                        path.Replace(treeViewFamilies.Nodes[0].Text, "");
+                        string output = MainCommand.DirectoryTreeStartDirectory + path.ToString();
+                        OutputTextFromFoldersTree = output;
+                        labelFamily.Text = NormalizeLength(output, 54);
+                        if (checkBoxSubfolders.Checked)
+                        {
+                            PathToFamilyList.Clear();
+                            AddPathsAndSubpathsToPathToFamilyList(output);
+                        }
+
+                        if (!checkBoxSubfolders.Checked)
+                        {
+                            PathToFamilyList.Clear();
+                            AddPathsToPathToFamilyList(output);
+                        }
+                    }
+                    if (selectedNoteTextIsFamily)
+                    {
+                        PathToFamilyList.Clear();
+                        bool isNodeHasParent = false;
+                        StringBuilder path = new StringBuilder();
+                        var node = e.Node;
+                        path.Append(node.Text);
+                        TreeNode nodePrevios = null;
+                        do
+                        {
+                            nodePrevios = node.Parent;
+                            if (nodePrevios != null)
+                            {
+                                isNodeHasParent = true;
+                                path.Insert(0, nodePrevios.Text + @"\");
+                            }
+                            else
+                            {
+                                isNodeHasParent = false;
+                            }
+                            node = nodePrevios;
+                        }
+                        while (isNodeHasParent);
+                        path.Replace(treeViewFamilies.Nodes[0].Text, "");
+                        string output = MainCommand.DirectoryTreeStartDirectory + path.ToString();
+                        OutputTextFromFoldersTree = output;
+                        labelFamily.Text = NormalizeLength(output, 54);
+                        PathToFamilyList.Add(output);
+                    }
+                }
+                else 
+                {
+                    e.DrawDefault = true;
                 }
             }
-            else
+            catch (Exception e1)
             {
-                e.DrawDefault = true;
+                //System.Windows.MessageBox.Show(e1.ToString());
             }
+            
         }
         private void TreeViewParameters_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
@@ -198,7 +220,7 @@ namespace BatchAddingParameters
                 Color nodeForeColor = GetTreeNodeForeColor(e.Node, e.State);
 
                 // fill node background
-                using (SolidBrush brush = new SolidBrush(Color.DarkOliveGreen))
+                using (SolidBrush brush = new SolidBrush(Color.DarkSlateBlue))
                 {
                     e.Graphics.FillRectangle(brush, e.Bounds);
                 }
@@ -238,8 +260,12 @@ namespace BatchAddingParameters
                     "Экспортированные параметры"
                 };
                 bool nodeTextIsInGroupNames = Array.Exists(groupNames, text => text == nodeText);
-                if (!nodeTextIsInGroupNames) 
-                    buttonParameter.Text = e.Node.Text;
+                if (!nodeTextIsInGroupNames)
+                {
+                    Parameter = e.Node.Text;
+                    labelParameter.Text = Parameter;
+                }
+                    
             }
             else
             {
@@ -247,9 +273,13 @@ namespace BatchAddingParameters
             }
 
         }
+        string NormalizeLength(string value, int maxLength)
+        {
+            return value.Length <= maxLength ? value : "..." + value.Substring(value.Length - maxLength, maxLength);
+        }
         private Font GetTreeNodeFont(TreeNode node)
         {
-            Font font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Regular);
+            Font font = new System.Drawing.Font("Segoe UI Light", 10);
             Font nodeFont = node.NodeFont;
             if (nodeFont == null)
             {
@@ -341,10 +371,44 @@ namespace BatchAddingParameters
                     PathToFamilyList.Add(fileName);
                 }
             }
+            
+        }
+        public static void AddPathsAndSubpathsToPathToFamilyList(string targetDirectory)
+        {
+            string[] fileEntries = Directory.GetFiles(targetDirectory);
+            foreach (string fileName in fileEntries)
+            {
+                if (fileName.Contains(".rfa"))
+                {
+                    PathToFamilyList.Add(fileName);
+                }
+            }
 
             string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
             foreach (string subdirectory in subdirectoryEntries)
-                AddPathsToPathToFamilyList(subdirectory);
+                AddPathsAndSubpathsToPathToFamilyList(subdirectory);
+
+
+        }
+        private void ComboBoxStartFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            treeViewFamilies.BeginUpdate();
+            MainCommand.ListDirectory(treeViewFamilies, comboBoxStartFolder.Text);
+            treeViewFamilies.EndUpdate();
+        }
+
+        private void CheckBoxSubfolders_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrWhiteSpace(OutputTextFromFoldersTree))
+            {
+                if (!OutputTextFromFoldersTree.Contains(".rfa"))
+                {
+                    PathToFamilyList.Clear();
+                    if (checkBoxSubfolders.Checked) AddPathsAndSubpathsToPathToFamilyList(OutputTextFromFoldersTree);
+                    if (!checkBoxSubfolders.Checked) AddPathsToPathToFamilyList(OutputTextFromFoldersTree);
+                }
+            }
+
         }
     }
 
@@ -422,7 +486,7 @@ namespace BatchAddingParameters
             FamilyParameterSet parametersList = familyManager.Parameters;
             foreach (FamilyParameter p in parametersList)
             {
-                if (p.Definition.Name == sharedParameterName) return "Параметр " + p.Definition.Name + " существует";
+                if (p.Definition.Name == sharedParameterName) return "! " + "Параметр " + sharedParameterName + " существует в семействе " + doc.Title + ".rfa";
             }
 
             try
