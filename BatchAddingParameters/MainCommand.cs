@@ -22,7 +22,9 @@ namespace BatchAddingParameters
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
 
+
             #region WindowForm
+            
             var app = commandData.Application.Application;
 
             app.SharedParametersFilename = FOPPath;
@@ -112,6 +114,7 @@ namespace BatchAddingParameters
 
             mainForm.comboBoxStartFolder.Items.Add(@"C:\Users\" + Environment.UserName); //@"\Downloads"
             mainForm.comboBoxStartFolder.Items.Add(@"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств");
+
             mainForm.comboBoxStartFolder.SelectedIndex = 0;
             #endregion
 
@@ -119,12 +122,14 @@ namespace BatchAddingParameters
             ButtonDeleteExternalEvent.MainForm = mainForm;
 
             mainForm.Show();
+            
             #endregion
 
-            /*
-            FormWPF formWPF = new FormWPF();
-            formWPF.Show();
-            */
+
+            //var windowMain = new WindowMain();
+            //windowMain._Application = commandData.Application.Application;
+            //windowMain.Show();
+
             return Result.Succeeded;
         }
         private string GetFamilyParametersToString(Document doc)

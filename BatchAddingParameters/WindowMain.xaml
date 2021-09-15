@@ -5,35 +5,110 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BatchAddingParameters"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800"
-             Title="Добавление общих параметров в семейства" Height="600" Width="700">
+             Title="Добавление общих параметров в семейства" Height="800" Width="700"
+             Background="SteelBlue" FontFamily="Segoe UI Light"
+        >
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Привет! Выбери параметр из ФОП из дерева слева и затем семейство из дерева справа" FontSize="14" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"/>
-        <TreeView Name="ФОП" Grid.Row="2" Grid.Column="1">
-            <TreeViewItem Header="Group 01" IsSelected="False">
-                <TreeViewItem Header="Parameter 01"/>
-                <TreeViewItem Header="Parameter 02"/>
-            </TreeViewItem>
-            <TreeViewItem Header="Group 02" IsSelected="False">
-                <TreeViewItem Header="Parameter 03"/>
-                <TreeViewItem Header="Parameter 04"/>
+        
+        <TextBlock Text="Параметры" FontSize="16" TextAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Foreground="White" Margin="5"/>
+        <Button x:Name="buttonHelp" Click="onButtonHelpClick" Content="?" Grid.Column="4" Grid.Row="1" Background="Transparent" FontSize="12" Foreground="Snow" BorderThickness="0">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5" />
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button x:Name="buttonChangeParametersList" Click="buttonChangeParametersList_Click" Content=" +/- " FontSize="12" HorizontalAlignment="Left"
+                Grid.Column="3" Grid.Row="1" Margin="0,5,0,5" Background="LightGoldenrodYellow">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5" />
+                </Style>
+            </Button.Resources>
+        </Button>
+        
+        <ListView x:Name="listViewParameters" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Height="180">
+            <ListView.View>
+                <GridView AllowsColumnReorder="True" ColumnHeaderToolTip="Parameter Info">
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=FirstColumn}" Width="20"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Header="Наименование параметра" Width="300"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Type}" Header="Экземпляр/Тип" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Group}" Header="Группа" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=ValueType}" Header="Тип значения" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Value}" Header="Значение" Width="auto"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        
+        <TextBlock Text="Семейства" FontSize="16" TextAlignment="Center" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Foreground="White" Margin="5"/>
+
+        <ComboBox x:Name="comboBoxStartFolder" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="4" AllowDrop="True" Margin="0,5,0,5">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=StartFolder}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TreeView Name="myTreeViewEvent" Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="4" 
+                  Height="200">
+            <TreeViewItem Header="Employee1" IsSelected="True">
+                <TreeViewItem Header="Jesper Aaberg"/>
+                <TreeViewItem Header="Employee Number">
+                    <TreeViewItem Header="12345"/>
+                </TreeViewItem>
+                <TreeViewItem Header="Work Days" />
             </TreeViewItem>
         </TreeView>
+        <Button Content="Удалить параметры из семейств" FontSize="14" HorizontalAlignment="Left" 
+                Width="250" Height="30"
+                Grid.Column="3" Grid.Row="8" Margin="20,5,0,5" Background="LightGoldenrodYellow">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5" />
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button Content="Добавить параметры в семейства" FontSize="14" HorizontalAlignment="Right" 
+                Width="250" Height="30"
+                Grid.Column="3" Grid.Row="8" Grid.ColumnSpan="2" Margin="0,5,20,5" Background="LightGoldenrodYellow">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5" />
+                </Style>
+            </Button.Resources>
+        </Button>
+        <TextBlock Text="Отчет" FontSize="16" TextAlignment="Center" Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="4" Foreground="White" Margin="5"/>
+        
+        <TextBlock Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="4"
+                   Margin="0,5,0,5" Foreground="LightGoldenrodYellow"
+                   Height="150"
+                   Text="Text..">
+        </TextBlock>
+        
+
     </Grid>
 </Window>

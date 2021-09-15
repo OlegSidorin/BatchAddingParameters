@@ -2,7 +2,7 @@
 using Autodesk.Revit.UI;
 using Application = Autodesk.Revit.ApplicationServices.Application;
 using System;
-using System.IO;
+//using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +15,8 @@ using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Rectangle = System.Drawing.Rectangle;
 using System.Windows;
+using ZetaLongPaths;
+using System.Threading;
 
 namespace BatchAddingParameters
 {
@@ -156,7 +158,7 @@ namespace BatchAddingParameters
                         path.Replace(treeViewFamilies.Nodes[0].Text, "");
                         string output = MainCommand.DirectoryTreeStartDirectory + path.ToString();
                         OutputTextFromFoldersTree = output;
-                        labelFamily.Text = NormalizeLength(output, 54);
+                        labelFamily.Text = NormalizeLength(output, 50);
                         if (checkBoxSubfolders.Checked)
                         {
                             PathToFamilyList.Clear();
@@ -193,9 +195,10 @@ namespace BatchAddingParameters
                         }
                         while (isNodeHasParent);
                         path.Replace(treeViewFamilies.Nodes[0].Text, "");
+                        //path.Insert(0, @"\");
                         string output = MainCommand.DirectoryTreeStartDirectory + path.ToString();
                         OutputTextFromFoldersTree = output;
-                        labelFamily.Text = NormalizeLength(output, 54);
+                        labelFamily.Text = NormalizeLength(output, 50);
                         PathToFamilyList.Add(output);
                     }
                 }
@@ -354,7 +357,6 @@ namespace BatchAddingParameters
             if (insert == "Идентификация") return BuiltInParameterGroup.PG_IDENTITY_DATA;
             if (insert == "Прочее") return BuiltInParameterGroup.INVALID;
 
-
             return BuiltInParameterGroup.INVALID;
         }
         private void CheckBoxInstance_CheckedChanged(object sender, EventArgs e)
@@ -363,40 +365,62 @@ namespace BatchAddingParameters
         }
         public static void AddPathsToPathToFamilyList(string targetDirectory)
         {
-            string[] fileEntries = Directory.GetFiles(targetDirectory);
-            foreach (string fileName in fileEntries)
+            var folderPath = new ZlpDirectoryInfo(targetDirectory);
+            //string[] fileEntries = Directory.GetFiles(targetDirectory);
+            foreach (var filePath in folderPath.GetFiles())
             {
-                if (fileName.Contains(".rfa"))
+                if (filePath.ToString().Contains(".rfa"))
                 {
-                    PathToFamilyList.Add(fileName);
+                    PathToFamilyList.Add(filePath.GetFullPath().ToString());
                 }
             }
+            //TaskDialog.Show("1", String.Join("\n", PathToFamilyList));
+            //foreach (string fileName in fileEntries)
+            //{
+            //    if (fileName.Contains(".rfa"))
+            //    {
+            //        PathToFamilyList.Add(fileName);
+            //    }
+            //}
             
         }
         public static void AddPathsAndSubpathsToPathToFamilyList(string targetDirectory)
         {
-            string[] fileEntries = Directory.GetFiles(targetDirectory);
-            foreach (string fileName in fileEntries)
+            var folderPath = new ZlpDirectoryInfo(targetDirectory);
+            foreach (var filePath in folderPath.GetFiles())
             {
-                if (fileName.Contains(".rfa"))
+                if (filePath.ToString().Contains(".rfa"))
                 {
-                    PathToFamilyList.Add(fileName);
+                    PathToFamilyList.Add(filePath.GetFullPath().ToString().Replace(@"\\?\UNC\",@"\\"));
                 }
             }
+            //string[] fileEntries = Directory.GetFiles(targetDirectory);
+            //foreach (string fileName in fileEntries)
+            //{
+            //    if (fileName.Contains(".rfa"))
+            //    {
+            //        PathToFamilyList.Add(fileName);
+            //    }
+            //}
+            var subfolderPaths = folderPath.GetDirectories();
+            foreach (var subfolderPath in subfolderPaths)
+            {
+                AddPathsAndSubpathsToPathToFamilyList(subfolderPath.GetFullPath().ToString().Replace(@"\\?\UNC\", @"\\"));
+            }
 
-            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
-            foreach (string subdirectory in subdirectoryEntries)
-                AddPathsAndSubpathsToPathToFamilyList(subdirectory);
-
+            //string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            //foreach (string subdirectory in subdirectoryEntries)
+            //    AddPathsAndSubpathsToPathToFamilyList(subdirectory);
+            //TaskDialog.Show("2", String.Join("\n", PathToFamilyList));
 
         }
         private void ComboBoxStartFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
             treeViewFamilies.BeginUpdate();
             MainCommand.ListDirectory(treeViewFamilies, comboBoxStartFolder.Text);
+            MainCommand.DirectoryTreeStartDirectory = comboBoxStartFolder.Text;
             treeViewFamilies.EndUpdate();
         }
-
         private void CheckBoxSubfolders_CheckedChanged(object sender, EventArgs e)
         {
             if (!String.IsNullOrWhiteSpace(OutputTextFromFoldersTree))
@@ -422,13 +446,36 @@ namespace BatchAddingParameters
         public static BuiltInParameterGroup PGGroup;
         public void Execute(UIApplication uiApp)
         {
+            //foreach (string PathToFamily in PathToFamilyList)
+            //{
+            //    MainForm.textBoxResult.AppendText(PathToFamily + Environment.NewLine);
+            //}
+
             foreach (string PathToFamily in PathToFamilyList)
             {
-                var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
-                var resultText = AddSharedParameterIntoFamily(CommandData, doc, SharedParameter, IsInstance, PGGroup);
-                MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+                try
+                {
+                    var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+                    if (!doc.IsReadOnly || !doc.IsReadOnlyFile || doc.IsModifiable)
+                    {
+                        var resultText = AddSharedParameterIntoFamily(CommandData, doc, SharedParameter, IsInstance, PGGroup);
+                        MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+                    }
+                    else
+                    {
+                        doc.Close();
+                    }
+                    
+                }
+                catch (Exception e100)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия: " + e100.Message + Environment.NewLine);
+                }
+                
             }
 
+            if (PathToFamilyList.Count == 0)
+                MainForm.textBoxResult.AppendText("!!! отсутствует путь до семейства \n");
             /*
             MessageBox.Show(
                 PathToFamily + 
@@ -467,7 +514,7 @@ namespace BatchAddingParameters
         private string AddSharedParameterIntoFamily(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance, BuiltInParameterGroup group)
         {
             string str = "";
-            if (!doc.IsFamilyDocument) return "не семейство";
+
             FamilyManager familyManager = doc.FamilyManager;
             FamilyType familyType = familyManager.CurrentType;
             FamilyTypeSet types = familyManager.Types;
@@ -510,33 +557,50 @@ namespace BatchAddingParameters
                 //using (Transaction t = new Transaction(doc, "Something happen"))
                 //{
                 //    t.Start();
-                    //DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
-                    //DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
-                    //Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
-                    //ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
-                    //str = sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
+                //DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
+                //DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
+                //Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
+                //ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
+                //str = sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
                 //    t.Commit();
                 //}
                 str = "! " + sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
                 //TaskDialog.Show("!", e.ToString());
             }
-            doc.Save();
-            string docDir = Path.GetDirectoryName(doc.PathName);
+            try
+            {
+                doc.Save();
+            }
+            catch
+            {
+                str = "не возможно сохранить";
+            }
+                
+            //string docDir = Path.GetDirectoryName(doc.PathName);
+            var familyPath = new ZlpFileInfo(doc.PathName);
+            var docDir = familyPath.Directory;
             doc.Close();
             try
             {
-                string[] fileEntries = Directory.GetFiles(docDir, "*.0???.rfa");
-                foreach (string fileName in fileEntries)
-                    File.Delete(fileName);
+                var fileEntries = docDir.GetFiles(@"*.000?.rfa");
+                foreach (var fileName in fileEntries)
+                {
+                    if (fileName.FullName.Contains(""))
+                        fileName.Delete();
+                }
+
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show(e.ToString());
+                str += " - старую копию файла невозможно удалить по причине: " + e.ToString() + "\n";
             }
             return str;
+
         }
+            
 
     }
+
     public class ButtonDeleteExternalEvent : IExternalEventHandler
     {
         public static List<string> PathToFamilyList;
@@ -616,13 +680,13 @@ namespace BatchAddingParameters
             #endregion
 
             doc.Save();
-            string docDir = Path.GetDirectoryName(doc.PathName);
+            //string docDir = Path.GetDirectoryName(doc.PathName);
             doc.Close();
             try
             {
-                string[] fileEntries = Directory.GetFiles(docDir, "*.0???.rfa");
-                foreach (string fileName in fileEntries)
-                    File.Delete(fileName);
+                //string[] fileEntries = Directory.GetFiles(docDir, "*.0???.rfa");
+                //foreach (string fileName in fileEntries)
+                //    File.Delete(fileName);
             }
             catch (Exception e)
             {
@@ -648,4 +712,5 @@ namespace BatchAddingParameters
             return outputGroupName;
         }
     }
+
 }

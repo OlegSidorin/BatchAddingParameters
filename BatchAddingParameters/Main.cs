@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Media.Imaging;
 using Autodesk.Revit.Attributes;
 using System;
+using Autodesk.Revit.DB.Events;
 
 namespace BatchAddingParameters
 {
@@ -40,5 +41,6 @@ namespace BatchAddingParameters
 
             return decoder.Frames[0];
         }
+
     }
 }

@@ -2,7 +2,7 @@
 <RevitAddIns>
 	<AddIn Type="Application">
 		<Name>Добавление параметров в семейства в заданной папке</Name>
-		<Assembly>C:\Users\o.sidorin\source\repos\BatchAddingParameters\BatchAddingParameters\bin\Debug\BatchAddingParameters.dll</Assembly>
+		<Assembly>BatchAddingParameters\BatchAddingParameters.dll</Assembly>
 		<AddInId>FCB76AFC-ADEB-4915-8099-D5A2AC1A2FE2</AddInId>
 		<FullClassName>BatchAddingParameters.Main</FullClassName>
 		<VendorId>M1</VendorId>
