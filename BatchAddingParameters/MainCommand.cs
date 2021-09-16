@@ -27,6 +27,8 @@ namespace BatchAddingParameters
             
             var app = commandData.Application.Application;
 
+            
+
             app.SharedParametersFilename = FOPPath;
             ButtonAddExternalEvent.CommandData = commandData;
             ButtonDeleteExternalEvent.CommandData = commandData;

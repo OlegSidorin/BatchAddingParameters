@@ -451,28 +451,95 @@ namespace BatchAddingParameters
             //    MainForm.textBoxResult.AppendText(PathToFamily + Environment.NewLine);
             //}
 
+            DateTime a = DateTime.Now;
+            
+            MainForm.textBoxResult.AppendText($" ... ... ... ... добавление {SharedParameter} ... ... ... ... " + Environment.NewLine);
+
+            int i_sucses = 0;
+            int i_all = 0;
+
             foreach (string PathToFamily in PathToFamilyList)
             {
+                i_all += 1;
                 try
                 {
-                    var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
-                    if (!doc.IsReadOnly || !doc.IsReadOnlyFile || doc.IsModifiable)
+                    if (!PathToFamily.Contains(".00"))
                     {
-                        var resultText = AddSharedParameterIntoFamily(CommandData, doc, SharedParameter, IsInstance, PGGroup);
-                        MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+                        var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+                        if (!doc.IsReadOnly || !doc.IsReadOnlyFile || doc.IsModifiable)
+                        {
+                            var resultText = AddSharedParameterIntoFamily(CommandData, doc, SharedParameter, IsInstance, PGGroup);
+                            MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+                            i_sucses += 1;
+                        }
+                        else
+                        {
+                            MainForm.textBoxResult.AppendText(":: " + CM.CloseDoc(doc) + " проигнорировван " + Environment.NewLine);
+                        }
                     }
                     else
                     {
-                        doc.Close();
+                        MainForm.textBoxResult.AppendText(":: ..." + PathToFamily.Substring(PathToFamily.Length - 20) + " проигнорировван " + Environment.NewLine);
                     }
-                    
+
                 }
-                catch (Exception e100)
+
+                #region catch block
+                catch (Autodesk.Revit.Exceptions.ArgumentNullException openErr)
                 {
-                    MainForm.textBoxResult.AppendText($"! ошибка открытия: " + e100.Message + Environment.NewLine);
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (ArgumentNull): " + openErr.Message + Environment.NewLine);
                 }
-                
+                catch (Autodesk.Revit.Exceptions.ArgumentException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (Argument): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CannotOpenBothCentralAndLocalException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (CannotOpenBothCentralAndLocal): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CentralModelException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (CentralModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CorruptModelException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (CorruptModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileAccessException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (FileAccess): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileNotFoundException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (FileNotFound): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InsufficientResourcesException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (InsufficientResources): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InvalidOperationException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (InvalidOperation): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (OperationCanceled): " + openErr.Message + Environment.NewLine);
+                }
+                catch (NullReferenceException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (Системная, ссылка не ведет к файлу): " + openErr.ToString() + Environment.NewLine);
+                }
+                catch (Exception openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (Системная): " + openErr.ToString() + Environment.NewLine);
+                }
+                #endregion
             }
+            DateTime b = DateTime.Now;
+
+            MainForm.textBoxResult.AppendText("заняло не более " + ((int)b.Subtract(a).TotalMinutes + 1).ToString() + " мин" + Environment.NewLine);
+            MainForm.textBoxResult.AppendText($"всего семейств: {i_all}, обработано без ошибок: {i_sucses}" + Environment.NewLine);
+
 
             if (PathToFamilyList.Count == 0)
                 MainForm.textBoxResult.AppendText("!!! отсутствует путь до семейства \n");
@@ -519,6 +586,7 @@ namespace BatchAddingParameters
             FamilyType familyType = familyManager.CurrentType;
             FamilyTypeSet types = familyManager.Types;
 
+            #region check if family has no type
             if (familyType == null)
             {
                 using (Transaction t = new Transaction(doc, "change"))
@@ -529,13 +597,33 @@ namespace BatchAddingParameters
                     t.Commit();
                 }
             }
+            #endregion
 
             FamilyParameterSet parametersList = familyManager.Parameters;
+
+            #region check tha parameter already in doc
             foreach (FamilyParameter p in parametersList)
             {
-                if (p.Definition.Name == sharedParameterName) return "! " + "Параметр " + sharedParameterName + " существует в семействе " + doc.Title + ".rfa";
-            }
+                if (p.Definition.Name == sharedParameterName)
+                {
+                    string addedToStr = "";
+                    var docName = doc.Title + ".rfa";
+                    try
+                    {
+                        addedToStr += CM.CloseDocSimple(doc);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
 
+                    return ":: " + "Параметр " + sharedParameterName + " существует в семействе " + docName + addedToStr;
+                }
+                    
+            }
+            #endregion
+
+            #region add parameter
             try
             {
                 //app.SharedParametersFilename = CommandForAddingParameters.FOPPath;
@@ -554,50 +642,15 @@ namespace BatchAddingParameters
             }
             catch (Exception e)
             {
-                //using (Transaction t = new Transaction(doc, "Something happen"))
-                //{
-                //    t.Start();
-                //DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
-                //DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
-                //Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
-                //ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
-                //str = sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
-                //    t.Commit();
-                //}
                 str = "! " + sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
-                //TaskDialog.Show("!", e.ToString());
             }
-            try
-            {
-                doc.Save();
-            }
-            catch
-            {
-                str = "не возможно сохранить";
-            }
-                
-            //string docDir = Path.GetDirectoryName(doc.PathName);
-            var familyPath = new ZlpFileInfo(doc.PathName);
-            var docDir = familyPath.Directory;
-            doc.Close();
-            try
-            {
-                var fileEntries = docDir.GetFiles(@"*.000?.rfa");
-                foreach (var fileName in fileEntries)
-                {
-                    if (fileName.FullName.Contains(""))
-                        fileName.Delete();
-                }
+            #endregion
 
-            }
-            catch (Exception e)
-            {
-                str += " - старую копию файла невозможно удалить по причине: " + e.ToString() + "\n";
-            }
+            str += CM.SaveAndCloseDocSimple(doc);
+
             return str;
 
         }
-            
 
     }
 
@@ -609,12 +662,99 @@ namespace BatchAddingParameters
         public static string SharedParameter;
         public void Execute(UIApplication app)
         {
+            DateTime a = DateTime.Now;
+
+            MainForm.textBoxResult.AppendText($" ... ... ... ... удаление {SharedParameter} ... ... ... ... " + Environment.NewLine);
+
+            int i_sucses = 0;
+            int i_all = 0;
+
             foreach (string PathToFamily in PathToFamilyList)
             {
-                var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
-                var resultText = DeleteSharedParameterFromFamily(CommandData, doc, SharedParameter);
-                MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+                i_all += 1;
+                try
+                {
+                    if (!PathToFamily.Contains(".00"))
+                    {
+                        var doc = CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+                        if (!doc.IsReadOnly || !doc.IsReadOnlyFile || doc.IsModifiable)
+                        {
+                            var resultText = DeleteSharedParameterFromFamily(CommandData, doc, SharedParameter);
+                            MainForm.textBoxResult.AppendText(resultText + Environment.NewLine);
+                            i_sucses += 1;
+                        }
+                        else
+                        {
+                            MainForm.textBoxResult.AppendText(":: " + CM.CloseDoc(doc) + " проигнорировван " + Environment.NewLine);
+                        }
+                    }
+                    else
+                    {
+                        MainForm.textBoxResult.AppendText(":: ..." + PathToFamily.Substring(PathToFamily.Length - 20) + " проигнорировван " + Environment.NewLine);
+                    }
+
+                }
+
+                #region catch block
+                catch (Autodesk.Revit.Exceptions.ArgumentNullException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (ArgumentNull): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.ArgumentException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (Argument): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CannotOpenBothCentralAndLocalException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (CannotOpenBothCentralAndLocal): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CentralModelException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (CentralModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CorruptModelException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (CorruptModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileAccessException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (FileAccess): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileNotFoundException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (FileNotFound): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InsufficientResourcesException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (InsufficientResources): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InvalidOperationException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (InvalidOperation): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (OperationCanceled): " + openErr.Message + Environment.NewLine);
+                }
+                catch (NullReferenceException openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (Системная, ссылка не ведет к файлу): " + openErr.ToString() + Environment.NewLine);
+                }
+                catch (Exception openErr)
+                {
+                    MainForm.textBoxResult.AppendText($"! ошибка открытия (Системная): " + openErr.ToString() + Environment.NewLine);
+                }
+                #endregion
             }
+            DateTime b = DateTime.Now;
+
+            MainForm.textBoxResult.AppendText("заняло не более " + ((int)b.Subtract(a).TotalMinutes + 1).ToString() + " мин" + Environment.NewLine);
+            MainForm.textBoxResult.AppendText($"всего семейств: {i_all}, обработано без ошибок: {i_sucses}" + Environment.NewLine);
+
+
+            if (PathToFamilyList.Count == 0)
+                MainForm.textBoxResult.AppendText("!!! отсутствует путь до семейства \n");
+
             return;
         }
 
@@ -625,11 +765,12 @@ namespace BatchAddingParameters
         private string DeleteSharedParameterFromFamily(ExternalCommandData commandData, Document doc, string sharedParameterName)
         {
             string str = "";
-            if (!doc.IsFamilyDocument) return "не семейство";
 
             FamilyManager familyManager = doc.FamilyManager;
-            FamilyType familyType;
-            familyType = familyManager.CurrentType;
+            FamilyType familyType = familyManager.CurrentType;
+            FamilyTypeSet types = familyManager.Types;
+
+            #region check if family has no type
             if (familyType == null)
             {
                 using (Transaction t = new Transaction(doc, "change"))
@@ -640,16 +781,17 @@ namespace BatchAddingParameters
                     t.Commit();
                 }
             }
+            #endregion
 
-            #region clear 
-            //TaskDialog.Show("Warning", "Privet");
+            FamilyParameterSet parametersList = familyManager.Parameters;
+
+            #region clear family from parameter 
             try
             {
                 commandData.Application.Application.SharedParametersFilename = MainCommand.FOPPath;
                 using (Transaction t = new Transaction(doc, "Clear"))
                 {
                     t.Start();
-                    FamilyParameterSet parametersList = familyManager.Parameters;
 
                     try
                     {
@@ -668,30 +810,18 @@ namespace BatchAddingParameters
                         str = "! " + sharedParameterName + " отсутсвует в семействе " + doc.Title + ".rfa";
                     }
 
-
                     t.Commit();
                 }
             }
             catch (Exception e)
             {
-                TaskDialog.Show("Warning 1", e.ToString());
+                TaskDialog.Show("1", e.ToString());
             }
 
             #endregion
 
-            doc.Save();
-            //string docDir = Path.GetDirectoryName(doc.PathName);
-            doc.Close();
-            try
-            {
-                //string[] fileEntries = Directory.GetFiles(docDir, "*.0???.rfa");
-                //foreach (string fileName in fileEntries)
-                //    File.Delete(fileName);
-            }
-            catch (Exception e)
-            {
-                System.Windows.MessageBox.Show(e.ToString());
-            }
+            str += CM.SaveAndCloseDocSimple(doc);
+
             return str;
         }
         private string GroupNameBySharedParameterName(ExternalCommandData commandData, string sharedParameterName)
