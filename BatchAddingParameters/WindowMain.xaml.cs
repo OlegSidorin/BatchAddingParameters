@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
 
 namespace BatchAddingParameters
 {
@@ -22,7 +23,9 @@ namespace BatchAddingParameters
     {
         public Autodesk.Revit.ApplicationServices.Application _Application;
         ComboBoxItem _ComboBoxItem = new ComboBoxItem();
-        ParameterProperties _ParameterProperties = new ParameterProperties();
+        ParameterViewModel _ParameterProperties = new ParameterViewModel();
+        FolderTreeNodeItem _TreeViewItems = new FolderTreeNodeItem();
+
         public WindowMain()
         {
             InitializeComponent();
@@ -34,6 +37,8 @@ namespace BatchAddingParameters
             listViewParameters.ItemsSource = _ParameterProperties.AllParameters(_Application);
             comboBoxStartFolder.ItemsSource = _ComboBoxItem.StartFolders();
             comboBoxStartFolder.SelectedIndex = 0;
+
+            folderTree.ItemsSource = _TreeViewItems.FolderTreeNodeItems();
         }
 
         private void onButtonHelpClick(object sender, RoutedEventArgs e)

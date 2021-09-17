@@ -22,9 +22,9 @@ namespace BatchAddingParameters
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
 
-
-            #region WindowForm
             
+            #region WindowForm
+            /*
             var app = commandData.Application.Application;
 
             
@@ -124,13 +124,13 @@ namespace BatchAddingParameters
             ButtonDeleteExternalEvent.MainForm = mainForm;
 
             mainForm.Show();
-            
+            */
             #endregion
 
 
-            //var windowMain = new WindowMain();
-            //windowMain._Application = commandData.Application.Application;
-            //windowMain.Show();
+            var windowMain = new WindowMain();
+            windowMain._Application = commandData.Application.Application;
+            windowMain.Show();
 
             return Result.Succeeded;
         }

@@ -62,9 +62,9 @@ namespace BatchAddingParameters
                 string docIsClosed = "";
                 string docName = doc.Title + ".rfa";
                 if (doc.Close(true))
-                    docIsClosed = $" (закрыт) ";
+                    docIsClosed = "";
                 else
-                    docIsClosed = $" (остался открытым) ";
+                    docIsClosed = "<-";
                 output = docIsClosed;
 
                 DeleteBackupFilesOf(dirPath, docName.Replace(".rfa", ""));
@@ -110,9 +110,9 @@ namespace BatchAddingParameters
                 string docIsClosed = "";
                 string docName = doc.Title + ".rfa";
                 if (doc.Close())
-                    docIsClosed = $" (закрыт) ";
+                    docIsClosed = "";
                 else
-                    docIsClosed = $" (остался открытым) ";
+                    docIsClosed = "<-";
                 output = docIsClosed;
 
                 DeleteBackupFilesOf(dirPath, docName.Replace(".rfa", ""));

@@ -374,14 +374,7 @@ namespace BatchAddingParameters
                     PathToFamilyList.Add(filePath.GetFullPath().ToString());
                 }
             }
-            //TaskDialog.Show("1", String.Join("\n", PathToFamilyList));
-            //foreach (string fileName in fileEntries)
-            //{
-            //    if (fileName.Contains(".rfa"))
-            //    {
-            //        PathToFamilyList.Add(fileName);
-            //    }
-            //}
+
             
         }
         public static void AddPathsAndSubpathsToPathToFamilyList(string targetDirectory)
@@ -394,24 +387,13 @@ namespace BatchAddingParameters
                     PathToFamilyList.Add(filePath.GetFullPath().ToString().Replace(@"\\?\UNC\",@"\\"));
                 }
             }
-            //string[] fileEntries = Directory.GetFiles(targetDirectory);
-            //foreach (string fileName in fileEntries)
-            //{
-            //    if (fileName.Contains(".rfa"))
-            //    {
-            //        PathToFamilyList.Add(fileName);
-            //    }
-            //}
+
             var subfolderPaths = folderPath.GetDirectories();
             foreach (var subfolderPath in subfolderPaths)
             {
                 AddPathsAndSubpathsToPathToFamilyList(subfolderPath.GetFullPath().ToString().Replace(@"\\?\UNC\", @"\\"));
             }
 
-            //string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
-            //foreach (string subdirectory in subdirectoryEntries)
-            //    AddPathsAndSubpathsToPathToFamilyList(subdirectory);
-            //TaskDialog.Show("2", String.Join("\n", PathToFamilyList));
 
         }
         private void ComboBoxStartFolder_SelectedIndexChanged(object sender, EventArgs e)
@@ -543,17 +525,7 @@ namespace BatchAddingParameters
 
             if (PathToFamilyList.Count == 0)
                 MainForm.textBoxResult.AppendText("!!! отсутствует путь до семейства \n");
-            /*
-            MessageBox.Show(
-                PathToFamily + 
-                Environment.NewLine + 
-                CommandData.Application.ActiveUIDocument.ActiveView.Name +
-                Environment.NewLine +
-                SharedParameter +
-                Environment.NewLine +
-                GroupNameBySharedParameterName(CommandData, SharedParameter)
-                );
-            */
+
             return;
         }
 
@@ -647,6 +619,13 @@ namespace BatchAddingParameters
             #endregion
 
             str += CM.SaveAndCloseDocSimple(doc);
+
+            return str;
+
+        }
+        private async Task<string> AddSharedParameterIntoFamilyAsync(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance, BuiltInParameterGroup group)
+        {
+            string str = await Task.Run(() => AddSharedParameterIntoFamily(commandData, doc, sharedParameterName, isInstance, group));
 
             return str;
 

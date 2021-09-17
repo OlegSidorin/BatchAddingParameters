@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CM.cs" />
+    <Compile Include="FolderTreeNodeItem.cs" />
     <Compile Include="MainCommand.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -84,7 +85,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelParameter.edmx</DependentUpon>
     </Compile>
-    <Compile Include="ParameterProperties.cs" />
+    <Compile Include="ParameterViewModel.cs" />
     <Compile Include="WindowAddParameterToList.xaml.cs">
       <DependentUpon>WindowAddParameterToList.xaml</DependentUpon>
     </Compile>

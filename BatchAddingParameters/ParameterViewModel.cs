@@ -14,27 +14,20 @@ using ZetaLongPaths;
 
 namespace BatchAddingParameters
 {
-    public class ParameterProperties
+    public class ParameterViewModel
     {
         public string Id { get; set; }
+        public string Guid { get; set; }
         public string Name { get; set; }
-        public string Type { get; set; }
-        public string Group { get; set; }
-        public string ValueType { get; set; }
-        public string Value { get; set; }
+        public string ParameterGroup { get; set; }
+        public string ParameterType { get; set; }
+        public string FamilyParameterGroup { get; set; }
+        public string FamilyParameterType { get; set; }
+        public string FamilyValue { get; set; }
 
-        public ParameterProperties()
+        public ParameterViewModel()
         {
 
-        }
-        public ParameterProperties(string id, string name, string type, string group, string valueType, string value)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
-            Group = group;
-            ValueType = valueType;
-            Value = value;
         }
 
         private List<string> GetGroupsOfFOP(Application app)
@@ -66,10 +59,9 @@ namespace BatchAddingParameters
             }
             return output;
         }
-
-        public ParameterProperties[] AllParameters(Application app)
+        public ParameterViewModel[] AllParameters(Application app)
         {
-            var output = new List<ParameterProperties>();
+            var output = new List<ParameterViewModel>();
             app.SharedParametersFilename = MainCommand.FOPPath;
             DefinitionFile sharedParametersFile = app.OpenSharedParameterFile();
             DefinitionGroups definitionGroups = sharedParametersFile.Groups;
@@ -77,13 +69,16 @@ namespace BatchAddingParameters
             {
                 foreach (Definition definition in definitionGroup.Definitions)
                 {
-                    var parameterProperties = new ParameterProperties();
+                    ExternalDefinition externalDefinition = definition as ExternalDefinition;
+                    var parameterProperties = new ParameterViewModel();
                     parameterProperties.Id = "";
-                    parameterProperties.Name = definition.Name;
-                    parameterProperties.Group = definitionGroup.Name;
-                    parameterProperties.Type = "";
-                    parameterProperties.ValueType = definition.ParameterType.ToString();
-                    parameterProperties.Value = "";
+                    parameterProperties.Guid = externalDefinition.GUID.ToString();
+                    parameterProperties.Name = externalDefinition.Name;
+                    parameterProperties.ParameterGroup = externalDefinition.OwnerGroup.Name;
+                    parameterProperties.ParameterType = definition.ParameterType.ToString();
+                    parameterProperties.FamilyParameterGroup = "Прочее";
+                    parameterProperties.FamilyParameterType = "Тип";
+                    parameterProperties.FamilyValue = "";
 
                     output.Add(parameterProperties);
                 }

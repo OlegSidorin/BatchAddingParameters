@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:BatchAddingParameters"
              mc:Ignorable="d"
              Title="Добавление общих параметров в семейства" Height="800" Width="700"
-             Background="SteelBlue" FontFamily="Segoe UI Light"
-        >
+             Background="SteelBlue" FontFamily="Segoe UI Light">
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
@@ -53,11 +53,13 @@
         <ListView x:Name="listViewParameters" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Height="180">
             <ListView.View>
                 <GridView AllowsColumnReorder="True" ColumnHeaderToolTip="Parameter Info">
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=FirstColumn}" Width="20"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Header="Наименование параметра" Width="300"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Type}" Header="Экземпляр/Тип" Width="auto"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Group}" Header="Группа" Width="auto"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=ValueType}" Header="Тип значения" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Id}" Width="20"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Guid}" Header="GUID" Width="80"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Header="Наименование параметра" Width="200"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=ParameterGroup}" Header="Группа в ФОП" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=ParameterType}" Header="Тип данных" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=FamilyParameterGroup}" Header="Группа параметров в семействе" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=FamilyParameterType}" Header="Экз./Тип" Width="auto"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Value}" Header="Значение" Width="auto"/>
                 </GridView>
             </ListView.View>
@@ -73,15 +75,13 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <TreeView Name="myTreeViewEvent" Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="4" 
+        <TreeView x:Name="folderTree" Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="4" 
                   Height="200">
-            <TreeViewItem Header="Employee1" IsSelected="True">
-                <TreeViewItem Header="Jesper Aaberg"/>
-                <TreeViewItem Header="Employee Number">
-                    <TreeViewItem Header="12345"/>
-                </TreeViewItem>
-                <TreeViewItem Header="Work Days" />
-            </TreeViewItem>
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type local:FolderTreeNodeItem}" ItemsSource="{Binding Path=SubNode}">
+                    <TreeViewItem Header="{Binding Path=Node}" />
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
         </TreeView>
         <Button Content="Удалить параметры из семейств" FontSize="14" HorizontalAlignment="Left" 
                 Width="250" Height="30"
