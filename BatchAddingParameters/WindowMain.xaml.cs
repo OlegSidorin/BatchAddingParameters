@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
+using System.IO;
+using Path = System.IO.Path;
 
 namespace BatchAddingParameters
 {
@@ -35,10 +37,92 @@ namespace BatchAddingParameters
         private void WindowMain_Loaded(object sender, RoutedEventArgs e)
         {
             listViewParameters.ItemsSource = _ParameterProperties.AllParameters(_Application);
+            /*
             comboBoxStartFolder.ItemsSource = _ComboBoxItem.StartFolders();
             comboBoxStartFolder.SelectedIndex = 0;
+            */
+            //folderTree.ItemsSource = _TreeViewItems.FolderTreeNodeItems();
+            /*
+            foreach (var drive in Directory.GetLogicalDrives())
+            {
+                var item = new TreeViewItem()
+                {
+                    Header = drive,
+                    Tag = drive
+                };
 
-            folderTree.ItemsSource = _TreeViewItems.FolderTreeNodeItems();
+                
+                item.Items.Add(null);
+                item.Expanded += Folder_Expanded;
+                FolderView.Items.Add(item);
+            }
+            */
+        }
+
+        private void Folder_Expanded(object sender, RoutedEventArgs e)
+        {
+            var item = sender as TreeViewItem;
+            if (item.Items.Count != 1 || item.Items[0] != null)
+                return;
+            item.Items.Clear();
+            var fullpath = item.Tag as string;
+            // add folders
+            var directories = new List<string>();
+            try
+            {
+                var dirs = Directory.GetDirectories(fullpath);
+                if (dirs.Length > 0)
+                    directories.AddRange(dirs);
+
+            }
+            catch
+            {
+
+            }
+            directories.ForEach(directoryPath =>
+            {
+                var subItem = new TreeViewItem()
+                {
+                    Header = GetFileFolderName(directoryPath),
+                    Tag = directoryPath
+                };
+                subItem.Items.Add(null);
+                subItem.Expanded += Folder_Expanded;
+                item.Items.Add(subItem);
+            });
+            // add files
+            var files = new List<string>();
+            try
+            {
+                var fs = Directory.GetFiles(fullpath);
+                if (fs.Length > 0)
+                    files.AddRange(fs);
+            }
+            catch
+            {
+
+            }
+            files.ForEach(filePath =>
+            {
+                var subItem = new TreeViewItem()
+                {
+                    Header = GetFileFolderName(filePath),
+                    Tag = filePath
+                };
+                item.Items.Add(subItem);
+
+            });
+        }
+
+        public static string GetFileFolderName(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+            var normalizedPath = path.Replace('/', '\\');
+            var lastIndex = normalizedPath.LastIndexOf('\\');
+            if (lastIndex <= 0)
+                return path;
+            return path.Substring(lastIndex + 1);
         }
 
         private void onButtonHelpClick(object sender, RoutedEventArgs e)
@@ -51,6 +135,56 @@ namespace BatchAddingParameters
         {
             var windowAddParameter = new WindowAddParameterToList();
             windowAddParameter._Application = _Application;
+        }
+
+        private void UserFolder_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            FolderView.Items.Clear();
+            var item = new TreeViewItem()
+            {
+                Header = Environment.UserName,
+                Tag = Main.UserFolder
+            };
+
+
+            item.Items.Add(null);
+            item.Expanded += Folder_Expanded;
+            FolderView.Items.Add(item);
+
+        }
+
+        private void AllFolders_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            FolderView.Items.Clear();
+            foreach (var drive in Directory.GetLogicalDrives())
+            {
+                var item = new TreeViewItem()
+                {
+                    Header = drive,
+                    Tag = drive
+                };
+
+
+                item.Items.Add(null);
+                item.Expanded += Folder_Expanded;
+                FolderView.Items.Add(item);
+            }
+
+        }
+
+        private void NetFolder_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            FolderView.Items.Clear();
+            var item = new TreeViewItem()
+            {
+                Header = "01. Библиотека семейств",
+                Tag = @"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств"
+            };
+
+
+            item.Items.Add(null);
+            item.Expanded += Folder_Expanded;
+            FolderView.Items.Add(item);
         }
     }
     public class ComboBoxItem
