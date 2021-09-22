@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="CM.cs" />
     <Compile Include="FolderTreeNodeItem.cs" />
+    <Compile Include="GroupInFamilyViewModel.cs" />
     <Compile Include="HeaderToImageConverter.cs" />
     <Compile Include="MainCommand.cs" />
     <Compile Include="MainForm.cs">
@@ -143,6 +144,9 @@
     </Content>
     <Content Include="res\goal-icon.ico" />
     <Content Include="res\net-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\net.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="res\plus-icon.png">

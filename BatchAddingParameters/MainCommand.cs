@@ -130,6 +130,7 @@ namespace BatchAddingParameters
 
             var windowMain = new WindowMain();
             windowMain._Application = commandData.Application.Application;
+            windowMain._CommandData = commandData;
             windowMain.Show();
 
             return Result.Succeeded;

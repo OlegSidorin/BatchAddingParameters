@@ -4,9 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BatchAddingParameters"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             Title="Добавь параметр в кучку" Height="500" Width="500"
+             mc:Ignorable="d" d:DesignWidth="800"
+             Title="Добавь параметр в список" Height="522.667" Width="500"
              Background="SteelBlue" FontFamily="Segoe UI Light">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -24,13 +23,47 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Параметры" FontSize="16" TextAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Foreground="White" Margin="5"/>
-        <TreeView x:Name="treeViewParameters" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3">
-            <TreeView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding ParameterNode}"/>
-                </DataTemplate>
-            </TreeView.ItemTemplate>
+        <TextBlock Text="Параметры ФОП" FontSize="16" TextAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Foreground="White" Margin="5"/>
+
+        <TreeView x:Name="treeViewParameters" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Height="300">
+            <TreeView.Resources>
+                <Style TargetType="{x:Type TreeViewItem}" >
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TreeView.Resources>
         </TreeView>
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">
+
+            <ComboBox x:Name="comboBox_Groups" Width="180" VerticalAlignment="Center" Margin="5,10,15,5" >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=GroupName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+
+            <CheckBox x:Name="checkBox" Content="Экземпляр" VerticalAlignment="Center" Margin="5,10,0,5" />
+
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">
+            <Button x:Name="ButtonAdd" Click="ButtonAddParameter_ButtonClick"
+                Content="Добавить параметр" Width="150" Height="40" Background="LightYellow"
+                HorizontalAlignment="Right" Margin="5"/>
+            <Button x:Name="ButtonClose" Click="ButtonClose_ButtonClick"
+                Content="Закрыть" Width="150" Height="40" Background="LightYellow"
+                HorizontalAlignment="Right" Margin="5"/>
+
+        </StackPanel>
+
     </Grid>
 </Window>

@@ -15,6 +15,9 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.IO;
 using Path = System.IO.Path;
+using System.Data;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
 
 namespace BatchAddingParameters
 {
@@ -24,10 +27,12 @@ namespace BatchAddingParameters
     public partial class WindowMain : Window
     {
         public Autodesk.Revit.ApplicationServices.Application _Application;
+        public Autodesk.Revit.UI.ExternalCommandData _CommandData;
         ComboBoxItem _ComboBoxItem = new ComboBoxItem();
         ParameterViewModel _ParameterProperties = new ParameterViewModel();
         FolderTreeNodeItem _TreeViewItems = new FolderTreeNodeItem();
-
+        ObservableCollection<ParameterViewModel> _AllParams;
+        public ObservableCollection<ParameterViewModel> _ParamsForAdd;
         public WindowMain()
         {
             InitializeComponent();
@@ -36,7 +41,18 @@ namespace BatchAddingParameters
 
         private void WindowMain_Loaded(object sender, RoutedEventArgs e)
         {
-            listViewParameters.ItemsSource = _ParameterProperties.AllParameters(_Application);
+
+            var listAllParameters = _ParameterProperties.AllParameters(_Application);
+            _AllParams = new ObservableCollection<ParameterViewModel>();
+            _ParamsForAdd = new ObservableCollection<ParameterViewModel>();
+            foreach (var item in listAllParameters)
+            {
+                _AllParams.Add(item);
+            }
+
+            listViewParameters.ItemsSource = _ParamsForAdd;
+
+
             /*
             comboBoxStartFolder.ItemsSource = _ComboBoxItem.StartFolders();
             comboBoxStartFolder.SelectedIndex = 0;
@@ -73,7 +89,6 @@ namespace BatchAddingParameters
                 var dirs = Directory.GetDirectories(fullpath);
                 if (dirs.Length > 0)
                     directories.AddRange(dirs);
-
             }
             catch
             {
@@ -94,8 +109,15 @@ namespace BatchAddingParameters
             var files = new List<string>();
             try
             {
-                var fs = Directory.GetFiles(fullpath);
-                if (fs.Length > 0)
+                var fsAll = Directory.GetFiles(fullpath);
+                var fs = new List<string>();
+                foreach (var path in fsAll)
+                {
+                    if (path.Contains(".rfa"))
+                        fs.Add(path);
+                }
+                
+                if (fs.Count > 0)
                     files.AddRange(fs);
             }
             catch
@@ -131,26 +153,32 @@ namespace BatchAddingParameters
             helpWindow.Show();
         }
 
-        private void buttonChangeParametersList_Click(object sender, RoutedEventArgs e)
-        {
-            var windowAddParameter = new WindowAddParameterToList();
-            windowAddParameter._Application = _Application;
-        }
-
         private void UserFolder_ButtonClick(object sender, RoutedEventArgs e)
         {
             FolderView.Items.Clear();
-            var item = new TreeViewItem()
+            var directories = new List<string>();
+            try
             {
-                Header = Environment.UserName,
-                Tag = Main.UserFolder
-            };
+                var dirs = Directory.GetDirectories(Main.UserFolder);
+                if (dirs.Length > 0)
+                    directories.AddRange(dirs);
+            }
+            catch
+            {
 
+            }
 
-            item.Items.Add(null);
-            item.Expanded += Folder_Expanded;
-            FolderView.Items.Add(item);
-
+            foreach (var dir in directories)
+            {
+                var item = new TreeViewItem()
+                {
+                    Header = GetFileFolderName(dir),
+                    Tag = dir
+                };
+                item.Items.Add(null);
+                item.Expanded += Folder_Expanded;
+                FolderView.Items.Add(item);
+            }
         }
 
         private void AllFolders_ButtonClick(object sender, RoutedEventArgs e)
@@ -164,7 +192,6 @@ namespace BatchAddingParameters
                     Tag = drive
                 };
 
-
                 item.Items.Add(null);
                 item.Expanded += Folder_Expanded;
                 FolderView.Items.Add(item);
@@ -175,17 +202,158 @@ namespace BatchAddingParameters
         private void NetFolder_ButtonClick(object sender, RoutedEventArgs e)
         {
             FolderView.Items.Clear();
-            var item = new TreeViewItem()
+            var directories = new List<string>();
+            try
             {
-                Header = "01. Библиотека семейств",
-                Tag = @"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств"
-            };
+                var dirs = Directory.GetDirectories(@"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств");
+                if (dirs.Length > 0)
+                    directories.AddRange(dirs);
+            }
+            catch
+            {
+
+            }
+
+            foreach (var dir in directories)
+            {
+                var item = new TreeViewItem()
+                {
+                    Header = GetFileFolderName(dir),
+                    Tag = dir
+                };
+                item.Items.Add(null);
+                item.Expanded += Folder_Expanded;
+                FolderView.Items.Add(item);
+            }
 
 
-            item.Items.Add(null);
-            item.Expanded += Folder_Expanded;
-            FolderView.Items.Add(item);
+
         }
+
+        private void ButtonFromListView_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            Button b = sender as Button;
+            ParameterViewModel parameter = b.CommandParameter as ParameterViewModel;
+            _ParamsForAdd.Remove(parameter);
+        }
+
+        private void ButtonAdd_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            WindowAddParameterToList window = new WindowAddParameterToList();
+            window._Application = _Application;
+            window._WindowMain = this;
+            window.Show();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonAddParametersInToFamily_Click(object sender, RoutedEventArgs e)
+        {
+            var treeViewSelectedItem = FolderView.SelectedItem as TreeViewItem;
+            string path = treeViewSelectedItem.Tag as string;
+            string str = "";
+            foreach (var par in _ParamsForAdd)
+            {
+                str += par.Name + ", ";
+            }
+            MessageBox.Show(str + " : " + path);
+            
+        }
+        private string GroupNameBySharedParameterName(ExternalCommandData commandData, string sharedParameterName)
+        {
+            string outputGroupName = "";
+
+            DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
+            DefinitionGroups definitionGroups = sharedParametersFile.Groups;
+            foreach (DefinitionGroup definitionGroup in definitionGroups)
+            {
+                foreach (Definition definition in definitionGroup.Definitions)
+                {
+                    if (definition.Name == sharedParameterName)
+                        outputGroupName = definitionGroup.Name;
+                }
+            }
+
+            return outputGroupName;
+        }
+        private string AddSharedParameterIntoFamily(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance, BuiltInParameterGroup group)
+        {
+            string str = "";
+
+            FamilyManager familyManager = doc.FamilyManager;
+            FamilyType familyType = familyManager.CurrentType;
+            FamilyTypeSet types = familyManager.Types;
+
+            #region check if family has no type
+            if (familyType == null)
+            {
+                using (Transaction t = new Transaction(doc, "change"))
+                {
+                    t.Start();
+                    familyType = familyManager.NewType("Тип 1");
+                    familyManager.CurrentType = familyType;
+                    t.Commit();
+                }
+            }
+            #endregion
+
+            FamilyParameterSet parametersList = familyManager.Parameters;
+
+            #region check tha parameter already in doc
+            foreach (FamilyParameter p in parametersList)
+            {
+                if (p.Definition.Name == sharedParameterName)
+                {
+                    string addedToStr = "";
+                    var docName = doc.Title + ".rfa";
+                    try
+                    {
+                        addedToStr += CM.CloseDocSimple(doc);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                    return ":: " + "Параметр " + sharedParameterName + " существует в семействе " + docName + addedToStr;
+                }
+
+            }
+            #endregion
+
+            #region add parameter
+            try
+            {
+                //app.SharedParametersFilename = CommandForAddingParameters.FOPPath;
+                using (Transaction t = new Transaction(doc, "Add paramter"))
+                {
+                    t.Start();
+                    DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
+                    DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
+                    Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
+                    ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
+                    FamilyParameter familyParameter = familyManager.AddParameter(externalDefinition, group, isInstance);
+                    str = "+ " + familyParameter.Definition.Name + " был успешно добавлен в семейство " + doc.Title + ".rfa";
+                    t.Commit();
+                }
+
+            }
+            catch (Exception e)
+            {
+                str = "! " + sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
+            }
+            #endregion
+
+            str += CM.SaveAndCloseDocSimple(doc);
+
+            return str;
+
+        }
+
+
     }
     public class ComboBoxItem
     {
