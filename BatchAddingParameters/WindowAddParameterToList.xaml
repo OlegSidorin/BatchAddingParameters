@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BatchAddingParameters"
              mc:Ignorable="d" d:DesignWidth="800"
-             Title="Добавь параметр в список" Height="522.667" Width="500"
+             Title="Браузер параметров ФОП" Height="520" Width="500"
              Background="SteelBlue" FontFamily="Segoe UI Light">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -17,6 +17,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -37,10 +39,23 @@
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
+                    <EventSetter x:Name="ParameterSelected" Event="Selected" Handler="ParameterIsSelectedOnTree" />
+
+
                 </Style>
             </TreeView.Resources>
         </TreeView>
+        
+        <Label x:Name="labelParameterType" Content="" Margin="5"
+               Foreground="LightYellow" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left"/>
+        
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">
+            <Label Content="Значение параметра:" Foreground="LightYellow" Margin="5" BorderThickness="0" VerticalAlignment="Center"/>
+            <TextBox x:Name="parameterValue" ToolTip="Не текстовые или не числовые будут проигнорированы. Десятичный разделитель - запятая"
+                     TextAlignment="Right" Width="150" Margin="5" VerticalAlignment="Center"/>
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">
 
             <ComboBox x:Name="comboBox_Groups" Width="180" VerticalAlignment="Center" Margin="5,10,15,5" >
                 <ComboBox.ItemTemplate>
@@ -49,13 +64,13 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            
 
-            <CheckBox x:Name="checkBox" Content="Экземпляр" VerticalAlignment="Center" Margin="5,10,0,5" />
+
+            <CheckBox x:Name="checkBox" Foreground="LightYellow" Content="Экземпляр" VerticalAlignment="Center" Margin="5,10,0,5" />
 
 
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">
             <Button x:Name="ButtonAdd" Click="ButtonAddParameter_ButtonClick"
                 Content="Добавить параметр" Width="150" Height="40" Background="LightYellow"
                 HorizontalAlignment="Right" Margin="5"/>

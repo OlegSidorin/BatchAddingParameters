@@ -26,6 +26,11 @@ namespace BatchAddingParameters
     /// </summary>
     public partial class WindowMain : Window
     {
+        public ButtonAddWindowExternalEvent ButtonAddWindowExternalEvent;
+        public ExternalEvent ExternalEventButtonAddWindow;
+        public ButtonDeleteWindowExternalEvent ButtonDeleteWindowExternalEvent;
+        public ExternalEvent ExternalEventButtonDeleteWindow;
+
         public Autodesk.Revit.ApplicationServices.Application _Application;
         public Autodesk.Revit.UI.ExternalCommandData _CommandData;
         ComboBoxItem _ComboBoxItem = new ComboBoxItem();
@@ -37,6 +42,12 @@ namespace BatchAddingParameters
         {
             InitializeComponent();
             Loaded += WindowMain_Loaded;
+
+            ButtonAddWindowExternalEvent = new ButtonAddWindowExternalEvent();
+            ExternalEventButtonAddWindow = ExternalEvent.Create(ButtonAddWindowExternalEvent);
+            ButtonDeleteWindowExternalEvent = new ButtonDeleteWindowExternalEvent();
+            ExternalEventButtonDeleteWindow = ExternalEvent.Create(ButtonDeleteWindowExternalEvent);
+
         }
 
         private void WindowMain_Loaded(object sender, RoutedEventArgs e)
@@ -245,137 +256,324 @@ namespace BatchAddingParameters
             window.Show();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void ButtonAddParametersInToFamily_Click(object sender, RoutedEventArgs e)
         {
-            var treeViewSelectedItem = FolderView.SelectedItem as TreeViewItem;
-            string path = treeViewSelectedItem.Tag as string;
-            string str = "";
-            foreach (var par in _ParamsForAdd)
-            {
-                str += par.Name + ", ";
-            }
-            MessageBox.Show(str + " : " + path);
-            
+
+            ButtonAddWindowExternalEvent._CommandData = _CommandData;
+            ButtonAddWindowExternalEvent._WindowMain = this;
+
+            ExternalEventButtonAddWindow.Raise();
+
         }
-        private string GroupNameBySharedParameterName(ExternalCommandData commandData, string sharedParameterName)
+
+
+        private void ButtonDeleteParametersFromFamily_Click(object sender, RoutedEventArgs e)
         {
-            string outputGroupName = "";
+            ButtonDeleteWindowExternalEvent._CommandData = _CommandData;
+            ButtonDeleteWindowExternalEvent._WindowMain = this;
 
-            DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
-            DefinitionGroups definitionGroups = sharedParametersFile.Groups;
-            foreach (DefinitionGroup definitionGroup in definitionGroups)
-            {
-                foreach (Definition definition in definitionGroup.Definitions)
-                {
-                    if (definition.Name == sharedParameterName)
-                        outputGroupName = definitionGroup.Name;
-                }
-            }
-
-            return outputGroupName;
+            ExternalEventButtonDeleteWindow.Raise();
         }
-        private string AddSharedParameterIntoFamily(ExternalCommandData commandData, Document doc, string sharedParameterName, bool isInstance, BuiltInParameterGroup group)
-        {
-            string str = "";
-
-            FamilyManager familyManager = doc.FamilyManager;
-            FamilyType familyType = familyManager.CurrentType;
-            FamilyTypeSet types = familyManager.Types;
-
-            #region check if family has no type
-            if (familyType == null)
-            {
-                using (Transaction t = new Transaction(doc, "change"))
-                {
-                    t.Start();
-                    familyType = familyManager.NewType("Тип 1");
-                    familyManager.CurrentType = familyType;
-                    t.Commit();
-                }
-            }
-            #endregion
-
-            FamilyParameterSet parametersList = familyManager.Parameters;
-
-            #region check tha parameter already in doc
-            foreach (FamilyParameter p in parametersList)
-            {
-                if (p.Definition.Name == sharedParameterName)
-                {
-                    string addedToStr = "";
-                    var docName = doc.Title + ".rfa";
-                    try
-                    {
-                        addedToStr += CM.CloseDocSimple(doc);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
-
-                    return ":: " + "Параметр " + sharedParameterName + " существует в семействе " + docName + addedToStr;
-                }
-
-            }
-            #endregion
-
-            #region add parameter
-            try
-            {
-                //app.SharedParametersFilename = CommandForAddingParameters.FOPPath;
-                using (Transaction t = new Transaction(doc, "Add paramter"))
-                {
-                    t.Start();
-                    DefinitionFile sharedParametersFile = commandData.Application.Application.OpenSharedParameterFile();
-                    DefinitionGroup sharedParametersGroup = sharedParametersFile.Groups.get_Item(GroupNameBySharedParameterName(commandData, sharedParameterName));
-                    Definition sharedParameterDefinition = sharedParametersGroup.Definitions.get_Item(sharedParameterName);
-                    ExternalDefinition externalDefinition = sharedParameterDefinition as ExternalDefinition;
-                    FamilyParameter familyParameter = familyManager.AddParameter(externalDefinition, group, isInstance);
-                    str = "+ " + familyParameter.Definition.Name + " был успешно добавлен в семейство " + doc.Title + ".rfa";
-                    t.Commit();
-                }
-
-            }
-            catch (Exception e)
-            {
-                str = "! " + sharedParameterName + " не удалось добавить в семейство " + doc.Title + ".rfa";
-            }
-            #endregion
-
-            str += CM.SaveAndCloseDocSimple(doc);
-
-            return str;
-
-        }
-
-
     }
-    public class ComboBoxItem
+
+
+    public class ButtonAddWindowExternalEvent : IExternalEventHandler
     {
-        public string StartFolder { get; set; }
-
-        public ComboBoxItem(string startFolder)
-        {
-            StartFolder = startFolder;
-        }
-        public ComboBoxItem()
+        public static WindowMain _WindowMain;
+        public static ExternalCommandData _CommandData;
+        
+        public void Execute(UIApplication uiApp)
         {
 
-        }
-        public ComboBoxItem[] StartFolders()
-        {
-            return new ComboBoxItem[]
+            var treeViewSelectedItem = _WindowMain.FolderView.SelectedItem as TreeViewItem;
+            string path = treeViewSelectedItem.Tag as string;
+            List<string> PathToFamilyList = new List<string>(); 
+            PathToFamilyList.Add(path);
+
+
+            
+            DateTime a = DateTime.Now;
+
+
+            //ParameterViewModel parameterForAdd = new ParameterViewModel();
+            //parameterForAdd = _WindowMain._ParamsForAdd.First();
+
+
+            _WindowMain.textBlockOutput.AppendText($" ... ... ... ... добавление {"параметров"} ... ... ... ... " + Environment.NewLine);
+
+            int i_sucses = 0;
+            int i_all = 0;
+
+            foreach (string PathToFamily in PathToFamilyList)
             {
-                new ComboBoxItem(@"C:\Users\" + Environment.UserName),
-                new ComboBoxItem(@"\\ukkalita.local\iptg\Строительно-девелоперский дивизион\М1 Проект\Проекты\10. Отдел информационного моделирования\01. REVIT\01. Библиотека семейств")
-            };
+                i_all += 1;
+                try
+                {
+                    if (!PathToFamily.Contains(".00"))
+                    {
+                        var doc = _CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+                        
+                        if (!doc.IsReadOnly || !doc.IsReadOnlyFile || doc.IsModifiable)
+                        {
+                            var resultText = "";
+                            foreach (var parameterForAdd in _WindowMain._ParamsForAdd)
+                            {
+                                resultText = parameterForAdd.AddSharedParameterIntoFamily(_CommandData, doc);
+
+                                _WindowMain.textBlockOutput.AppendText(resultText + Environment.NewLine);
+                                _WindowMain.textBlockOutput.CaretIndex = _WindowMain.textBlockOutput.Text.Length;
+                                _WindowMain.textBlockOutput.ScrollToEnd();
+                            }
+
+                            resultText += CM.SaveAndCloseDocSimple(doc);
+                            i_sucses += 1;
+                        }
+                        else
+                        {
+                            _WindowMain.textBlockOutput.AppendText(":: " + CM.CloseDoc(doc) + " проигнорировван " + Environment.NewLine);
+                        }
+                    }
+                    else
+                    {
+                        _WindowMain.textBlockOutput.AppendText(":: ..." + PathToFamily.Substring(PathToFamily.Length - 20) + " проигнорировван " + Environment.NewLine);
+                    }
+
+                }
+
+                #region catch block
+                catch (Autodesk.Revit.Exceptions.ArgumentNullException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (ArgumentNull): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.ArgumentException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (Argument): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CannotOpenBothCentralAndLocalException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (CannotOpenBothCentralAndLocal): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CentralModelException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (CentralModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CorruptModelException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (CorruptModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileAccessException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (FileAccess): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileNotFoundException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (FileNotFound): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InsufficientResourcesException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (InsufficientResources): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InvalidOperationException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (InvalidOperation): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (OperationCanceled): " + openErr.Message + Environment.NewLine);
+                }
+                catch (NullReferenceException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (Системная, ссылка не ведет к файлу): " + openErr.ToString() + Environment.NewLine);
+                }
+                catch (Exception openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (Системная): " + openErr.ToString() + Environment.NewLine);
+                }
+                #endregion
+            }
+            DateTime b = DateTime.Now;
+
+            _WindowMain.textBlockOutput.AppendText("заняло не более " + ((int)b.Subtract(a).TotalMinutes + 1).ToString() + " мин" + Environment.NewLine);
+            _WindowMain.textBlockOutput.AppendText($"всего семейств: {i_all}, обработано без ошибок: {i_sucses}" + Environment.NewLine);
+            _WindowMain.textBlockOutput.CaretIndex = _WindowMain.textBlockOutput.Text.Length;
+            _WindowMain.textBlockOutput.ScrollToEnd();
+
+
+            if (PathToFamilyList.Count == 0)
+                _WindowMain.textBlockOutput.AppendText("!!! отсутствует путь до семейства \n");
+
+            return;
         }
+
+        public string GetName()
+        {
+            return "External Event";
+        }
+        //private void AddPathsAndSubpathsToPathToFamilyList(string targetDirectory)
+        //{
+        //    var folderPath = new DirectoryInfo(targetDirectory);
+        //    foreach (var filePath in folderPath.GetFiles())
+        //    {
+        //        if (filePath.ToString().Contains(".rfa"))
+        //        {
+        //            PathToFamilyList.Add(filePath.FullName.ToString().Replace(@"\\?\UNC\", @"\\"));
+        //        }
+        //    }
+
+        //    var subfolderPaths = folderPath.GetDirectories();
+        //    foreach (var subfolderPath in subfolderPaths)
+        //    {
+        //        AddPathsAndSubpathsToPathToFamilyList(subfolderPath.FullName.ToString().Replace(@"\\?\UNC\", @"\\"));
+        //    }
+
+
+        //}
+        //private void AddPathsToPathToFamilyList(string targetDirectory)
+        //{
+        //    var folderPath = new DirectoryInfo(targetDirectory);
+        //    //string[] fileEntries = Directory.GetFiles(targetDirectory);
+        //    foreach (var filePath in folderPath.GetFiles())
+        //    {
+        //        if (filePath.ToString().Contains(".rfa"))
+        //        {
+        //            PathToFamilyList.Add(filePath.FullName.ToString());
+        //        }
+        //    }
+
+
+        //}
     }
 
+    public class ButtonDeleteWindowExternalEvent : IExternalEventHandler
+    {
+        public static WindowMain _WindowMain;
+        public static ExternalCommandData _CommandData;
+        public void Execute(UIApplication app)
+        {
+            var treeViewSelectedItem = _WindowMain.FolderView.SelectedItem as TreeViewItem;
+            string path = treeViewSelectedItem.Tag as string;
 
+            DateTime a = DateTime.Now;
+
+            List<string> PathToFamilyList = new List<string>();
+            PathToFamilyList.Add(path);
+
+            ParameterViewModel parameterForDelete = new ParameterViewModel();
+            parameterForDelete = _WindowMain._ParamsForAdd.First();
+
+            
+            _WindowMain.textBlockOutput.AppendText($" ... ... ... ... удаление {parameterForDelete.Name} ... ... ... ... " + Environment.NewLine);
+
+            int i_sucses = 0;
+            int i_all = 0;
+
+            foreach (string PathToFamily in PathToFamilyList)
+            {
+                i_all += 1;
+                try
+                {
+                    if (!PathToFamily.Contains(".00"))
+                    {
+                        var doc = _CommandData.Application.Application.OpenDocumentFile(PathToFamily);
+                        if (!doc.IsReadOnly || !doc.IsReadOnlyFile || doc.IsModifiable)
+                        {
+                            var resultText = "";
+                            foreach (var parameterForAdd in _WindowMain._ParamsForAdd)
+                            {
+                                resultText = parameterForDelete.DeleteSharedParameterFromFamily(_CommandData, doc);
+                                _WindowMain.textBlockOutput.AppendText(resultText + Environment.NewLine);
+                                _WindowMain.textBlockOutput.CaretIndex = _WindowMain.textBlockOutput.Text.Length;
+                                _WindowMain.textBlockOutput.ScrollToEnd();
+                            }
+                            resultText += CM.SaveAndCloseDocSimple(doc);
+                            i_sucses += 1;
+                        }
+                        else
+                        {
+                            _WindowMain.textBlockOutput.AppendText(":: " + CM.CloseDoc(doc) + " проигнорировван " + Environment.NewLine);
+                            _WindowMain.textBlockOutput.CaretIndex = _WindowMain.textBlockOutput.Text.Length;
+                            _WindowMain.textBlockOutput.ScrollToEnd();
+                        }
+                    }
+                    else
+                    {
+                        _WindowMain.textBlockOutput.AppendText(":: ..." + PathToFamily.Substring(PathToFamily.Length - 20) + " проигнорировван " + Environment.NewLine);
+                        _WindowMain.textBlockOutput.CaretIndex = _WindowMain.textBlockOutput.Text.Length;
+                        _WindowMain.textBlockOutput.ScrollToEnd();
+                    }
+
+                }
+
+                #region catch block
+                catch (Autodesk.Revit.Exceptions.ArgumentNullException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (ArgumentNull): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.ArgumentException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (Argument): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CannotOpenBothCentralAndLocalException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (CannotOpenBothCentralAndLocal): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CentralModelException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (CentralModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.CorruptModelException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (CorruptModel): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileAccessException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (FileAccess): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.FileNotFoundException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (FileNotFound): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InsufficientResourcesException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (InsufficientResources): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.InvalidOperationException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (InvalidOperation): " + openErr.Message + Environment.NewLine);
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (OperationCanceled): " + openErr.Message + Environment.NewLine);
+                }
+                catch (NullReferenceException openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (Системная, ссылка не ведет к файлу): " + openErr.ToString() + Environment.NewLine);
+                }
+                catch (Exception openErr)
+                {
+                    _WindowMain.textBlockOutput.AppendText($"! ошибка открытия (Системная): " + openErr.ToString() + Environment.NewLine);
+                }
+                #endregion
+            }
+            DateTime b = DateTime.Now;
+
+            _WindowMain.textBlockOutput.AppendText("заняло не более " + ((int)b.Subtract(a).TotalMinutes + 1).ToString() + " мин" + Environment.NewLine);
+            _WindowMain.textBlockOutput.AppendText($"всего семейств: {i_all}, обработано без ошибок: {i_sucses}" + Environment.NewLine);
+            _WindowMain.textBlockOutput.CaretIndex = _WindowMain.textBlockOutput.Text.Length;
+            _WindowMain.textBlockOutput.ScrollToEnd();
+
+
+            if (PathToFamilyList.Count == 0)
+                _WindowMain.textBlockOutput.AppendText("!!! отсутствует путь до семейства \n");
+
+
+            return;
+        }
+
+        public string GetName()
+        {
+            return "External Delete Event";
+        }
+    }
 }

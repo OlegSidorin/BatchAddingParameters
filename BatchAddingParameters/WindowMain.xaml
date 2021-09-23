@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BatchAddingParameters"
              mc:Ignorable="d"
-             Title="Добавление общих параметров в семейства" Height="655.333" Width="665.333"
+             Title="Добавление общих параметров в семейства" Height="720" Width="800"
              Background="SteelBlue" FontFamily="Segoe UI Light">
 
     <Grid>
@@ -56,7 +56,7 @@
                 <Image Width="20" Source="C:\Users\o.sidorin\source\repos\BatchAddingParameters\BatchAddingParameters\res\plus-icon.png" />
             </StackPanel>
         </Button>
-        <ListView x:Name="listViewParameters" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Height="200">
+        <ListView x:Name="listViewParameters" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Height="160">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -70,7 +70,7 @@
                     <GridViewColumn DisplayMemberBinding="{Binding Path=FamilyParameterType}" Header="Экз./Тип" Width="100"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=FamilyParameterGroup}" Header="Группа" Width="100"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=ParameterType}" Header="Тип" Width="100"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Value}" Header="Значение" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=FamilyValue}" Header="Значение" Width="180"/>
                     <GridViewColumn Width="50" Header="Удалить">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -139,11 +139,11 @@
                 </Style>
             </TreeView.Resources>
         </TreeView>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                    Grid.Column="1" Grid.Row="8"  Grid.ColumnSpan="4">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                    Grid.Column="3" Grid.Row="8"  Grid.ColumnSpan="2">
             <Button Content="Удалить параметры из семейств" FontSize="14" HorizontalAlignment="Left" 
                 Width="300" Height="60"
-                Margin="0,15,0,5" Background="LightGoldenrodYellow">
+                Margin="0,15,0,5" Background="LightPink" Click="ButtonDeleteParametersFromFamily_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0" />
@@ -152,7 +152,7 @@
             </Button>
             <Button Content="Добавить параметры в семейства" FontSize="14" HorizontalAlignment="Right" 
                     Width="300" Height="60"
-                    Margin="25,15,0,5" Background="LightGoldenrodYellow" Click="ButtonAddParametersInToFamily_Click">
+                    Margin="25,15,0,5" Background="LightGreen" Click="ButtonAddParametersInToFamily_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0" />
@@ -160,10 +160,13 @@
                 </Button.Resources>
             </Button>
         </StackPanel>
-        
-        
-
-
+        <TextBox x:Name="textBlockOutput" TextWrapping="Wrap" AcceptsReturn="True"
+                 HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                 Background="Transparent" Foreground="Yellow" BorderThickness="1" BorderBrush="DarkSalmon"
+                 Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3"
+                 Margin="0,10,0,0"/>
+        <Separator Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3"
+                   Background="LightYellow" Width="20"/>
 
     </Grid>
 </Window>

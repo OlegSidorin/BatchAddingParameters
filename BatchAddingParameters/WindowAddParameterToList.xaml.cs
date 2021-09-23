@@ -101,6 +101,7 @@ namespace BatchAddingParameters
                 }
                 GroupInFamilyViewModel group = comboBox_Groups.SelectedItem as GroupInFamilyViewModel;
                 parameter.FamilyParameterGroup = group.GroupName;
+                parameter.FamilyValue = parameterValue.Text;
                 if (checkBox.IsChecked ?? true)
                 {
                     parameter.FamilyParameterType = "Экземпляр";
@@ -126,6 +127,23 @@ namespace BatchAddingParameters
         private void ButtonClose_ButtonClick(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ParameterIsSelectedOnTree(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                TreeViewItem selItem = treeViewParameters.SelectedItem as TreeViewItem;
+                ParameterViewModel copyTag = selItem.Tag as ParameterViewModel;
+                labelParameterType.Content = copyTag.ParameterType;
+
+            }
+            catch
+            {
+                labelParameterType.Content = "";
+            }
+
         }
     }
 }
