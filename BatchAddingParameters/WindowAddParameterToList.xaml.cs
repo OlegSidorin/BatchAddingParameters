@@ -145,5 +145,10 @@ namespace BatchAddingParameters
             }
 
         }
+
+        private void MouseDoubleClickOnTreeViewItemOfParameters(object sender, RoutedEventArgs e)
+        {
+            ButtonAddParameter_ButtonClick(sender, e);
+        }
     }
 }

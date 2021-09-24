@@ -26,8 +26,8 @@
         </Grid.RowDefinitions>
         <Label Content="Описание работы программного модуля" Grid.Row="1" Grid.Column="1" FontSize="14" Grid.ColumnSpan="3" HorizontalContentAlignment="Center"/>
         <TextBox x:Name="textBox" Text="Описание работы..." 
-                   FontSize="12" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
-                 Height="280" TextWrapping="Wrap" TextAlignment="Justify" BorderThickness="0"/>
+                   FontSize="12" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2"
+                 TextWrapping="Wrap" TextAlignment="Justify" BorderThickness="0"/>
         <Button x:Name="buttonOk" Content="OK" Click="buttonClick" Width="150" Height="40" 
                 Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right" Background="BlanchedAlmond"/>
     </Grid>

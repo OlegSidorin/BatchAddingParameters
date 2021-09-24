@@ -63,6 +63,7 @@ namespace BatchAddingParameters
 
             listViewParameters.ItemsSource = _ParamsForAdd;
 
+            subFoldersCheckBox.IsChecked = true;
 
             /*
             comboBoxStartFolder.ItemsSource = _ComboBoxItem.StartFolders();
@@ -286,12 +287,12 @@ namespace BatchAddingParameters
         public void Execute(UIApplication uiApp)
         {
 
-            var treeViewSelectedItem = _WindowMain.FolderView.SelectedItem as TreeViewItem;
-            string path = treeViewSelectedItem.Tag as string;
-            List<string> PathToFamilyList = new List<string>(); 
-            PathToFamilyList.Add(path);
+            TreeViewItem treeViewSelectedItem = (TreeViewItem)_WindowMain.FolderView.SelectedItem;
+            bool withSubfolders = false;
+            if (_WindowMain.subFoldersCheckBox.IsChecked ?? true) withSubfolders = true;
+            List<string> PathToFamilyList = CM.CreatePathArray((string)treeViewSelectedItem.Tag, withSubfolders);
 
-
+            
             
             DateTime a = DateTime.Now;
 
@@ -300,7 +301,13 @@ namespace BatchAddingParameters
             //parameterForAdd = _WindowMain._ParamsForAdd.First();
 
 
-            _WindowMain.textBlockOutput.AppendText($" ... ... ... ... добавление {"параметров"} ... ... ... ... " + Environment.NewLine);
+            
+            var paramNames = new List<string>();
+            foreach(var item in _WindowMain._ParamsForAdd)
+            {
+                paramNames.Add(item.Name);
+            };
+            _WindowMain.textBlockOutput.AppendText($"-> ДОБАВЛЕНИЕ ПАРАМЕТРОВ: {string.Join(", ",  paramNames.ToArray())}" + Environment.NewLine);
 
             int i_sucses = 0;
             int i_all = 0;
@@ -451,19 +458,20 @@ namespace BatchAddingParameters
         public static ExternalCommandData _CommandData;
         public void Execute(UIApplication app)
         {
-            var treeViewSelectedItem = _WindowMain.FolderView.SelectedItem as TreeViewItem;
-            string path = treeViewSelectedItem.Tag as string;
+            TreeViewItem treeViewSelectedItem = (TreeViewItem)_WindowMain.FolderView.SelectedItem;
+            bool withSubfolders = false;
+            if (_WindowMain.subFoldersCheckBox.IsChecked ?? true) withSubfolders = true;
+            List<string> PathToFamilyList = CM.CreatePathArray((string)treeViewSelectedItem.Tag, withSubfolders);
 
             DateTime a = DateTime.Now;
 
-            List<string> PathToFamilyList = new List<string>();
-            PathToFamilyList.Add(path);
+            var paramNames = new List<string>();
+            foreach (var item in _WindowMain._ParamsForAdd)
+            {
+                paramNames.Add(item.Name);
+            };
+            _WindowMain.textBlockOutput.AppendText($"<- УДАЛЕНИЕ ПАРАМЕТРОВ: {string.Join(", ", paramNames.ToArray())}" + Environment.NewLine);
 
-            ParameterViewModel parameterForDelete = new ParameterViewModel();
-            parameterForDelete = _WindowMain._ParamsForAdd.First();
-
-            
-            _WindowMain.textBlockOutput.AppendText($" ... ... ... ... удаление {parameterForDelete.Name} ... ... ... ... " + Environment.NewLine);
 
             int i_sucses = 0;
             int i_all = 0;
@@ -479,7 +487,7 @@ namespace BatchAddingParameters
                         if (!doc.IsReadOnly || !doc.IsReadOnlyFile || doc.IsModifiable)
                         {
                             var resultText = "";
-                            foreach (var parameterForAdd in _WindowMain._ParamsForAdd)
+                            foreach (var parameterForDelete in _WindowMain._ParamsForAdd)
                             {
                                 resultText = parameterForDelete.DeleteSharedParameterFromFamily(_CommandData, doc);
                                 _WindowMain.textBlockOutput.AppendText(resultText + Environment.NewLine);

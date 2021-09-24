@@ -40,7 +40,7 @@
                         </Setter.Value>
                     </Setter>
                     <EventSetter x:Name="ParameterSelected" Event="Selected" Handler="ParameterIsSelectedOnTree" />
-
+                    <EventSetter x:Name="ParameterDoubleClick" Event="MouseDoubleClick" Handler="MouseDoubleClickOnTreeViewItemOfParameters" />
 
                 </Style>
             </TreeView.Resources>
@@ -52,7 +52,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">
             <Label Content="Значение параметра:" Foreground="LightYellow" Margin="5" BorderThickness="0" VerticalAlignment="Center"/>
             <TextBox x:Name="parameterValue" ToolTip="Не текстовые или не числовые будут проигнорированы. Десятичный разделитель - запятая"
-                     TextAlignment="Right" Width="150" Margin="5" VerticalAlignment="Center"/>
+                     TextAlignment="Center" Width="150" Margin="5" VerticalAlignment="Center"/>
 
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right">

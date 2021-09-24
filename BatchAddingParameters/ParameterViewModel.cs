@@ -273,7 +273,7 @@ namespace BatchAddingParameters
                             if (double.TryParse(FamilyValue, out double doubleValue))
                             {
                                 familyManager.Set(p, doubleValue);
-                                str += $"\n  ... присвоено в типе {ft.Name} значение с пл. точкой: " + FamilyValue;
+                                str += $"\n  ... присвоено в типе {ft.Name} числовое значение: " + FamilyValue;
                             };
 
                         }
@@ -284,6 +284,20 @@ namespace BatchAddingParameters
                                 familyManager.Set(p, intValue);
                                 str += $"\n  ... присвоено в типе {ft.Name} целочисленное значение: " + FamilyValue;
                             };
+
+                        }
+                        else if (ParameterType == "YesNo")
+                        {
+                            if (FamilyValue.ToLower().Contains("да") || FamilyValue.ToLower().Contains("yes") || FamilyValue.ToLower().Contains("true"))
+                            {
+                                familyManager.Set(p, (int)1);
+                                str += $"\n  ... присвоено в типе {ft.Name} логическое значение: true";
+                            } 
+                            else
+                            {
+                                familyManager.Set(p, (int)0);
+                                str += $"\n  ... присвоено в типе {ft.Name} логическое значение: false";
+                            }
 
                         }
                         else

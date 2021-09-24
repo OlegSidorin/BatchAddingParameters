@@ -16,8 +16,7 @@ namespace BatchAddingParameters
         public static HeaderToImageConverter Instance = new HeaderToImageConverter();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var path = value as string;
-
+            var path = (string)value;
             if (path == null)
                 return null;
             var name = WindowMain.GetFileFolderName(path);
@@ -25,7 +24,7 @@ namespace BatchAddingParameters
             if (string.IsNullOrEmpty(name))
                  fileImage = @"\res\drive-icon-48.png"; 
             else if (new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
-                fileImage = @"\res\folder-closed.png";   
+                fileImage = @"\res\folder-closed.png";
             else if (name.Contains(".rfa"))
                 fileImage = @"\res\revitfile-icon.png";
 

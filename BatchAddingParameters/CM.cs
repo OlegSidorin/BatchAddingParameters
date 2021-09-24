@@ -1,12 +1,91 @@
 ﻿using Autodesk.Revit.DB;
 using System;
-//using System.IO;
+using System.Collections.Generic;
+using System.IO;
 using ZetaLongPaths;
 
 namespace BatchAddingParameters
 {
     public static class CM
     {
+        static List<string> PathToFamilyList;
+        public static List<string> CreatePathArray(string path, bool withSubFolders)
+        {
+            PathToFamilyList = new List<string>();
+            FileAttributes attributes = File.GetAttributes(path);
+
+            //if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            //{
+            //    Console.WriteLine("read-only file");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("not read-only file");
+            //}
+            if (path.Contains(".rfa"))
+            {
+                PathToFamilyList.Add(path);
+                return PathToFamilyList;
+            }
+            else
+            {
+                if (attributes == FileAttributes.Directory)
+                {
+                    if (withSubFolders)
+                    {
+                        AddPathsAndSubpathsToPathToFamilyList(path);
+                    }
+                    else
+                    {
+                        AddPathsToPathToFamilyList(path);
+                    }
+                }
+                
+            }
+                
+            return PathToFamilyList;
+        }
+        private static void AddPathsToPathToFamilyList(string targetDirectory)
+        {
+            //var folderPath = new ZlpDirectoryInfo(targetDirectory);
+            string[] fileEntries = Directory.GetFiles(targetDirectory);
+            foreach (var filePath in fileEntries)
+            {
+                if (filePath.ToString().Contains(".rfa"))
+                {
+                    PathToFamilyList.Add(filePath);
+                }
+            }
+
+
+        }
+        private static void AddPathsAndSubpathsToPathToFamilyList(string targetDirectory)
+        {
+            //var folderPath = new ZlpDirectoryInfo(targetDirectory);
+            string[] fileEntries = Directory.GetFiles(targetDirectory);
+            foreach (var filePath in fileEntries)
+            {
+                if (filePath.ToString().Contains(".rfa"))
+                {
+                    PathToFamilyList.Add(filePath);
+                }
+            }
+            //foreach (var filePath in folderPath.GetFiles())
+            //{
+            //    if (filePath.ToString().Contains(".rfa"))
+            //    {
+            //        PathToFamilyList.Add(filePath.GetFullPath().ToString().Replace(@"\\?\UNC\", @"\\"));
+            //    }
+            //}
+
+            var subfolderPaths = Directory.GetDirectories(targetDirectory);                         //folderPath.GetDirectories();
+            foreach (var subfolderPath in subfolderPaths)
+            {
+                AddPathsAndSubpathsToPathToFamilyList(subfolderPath);                                 //.GetFullPath().ToString().Replace(@"\\?\UNC\", @"\\"));
+            }
+
+
+        }
         public static string DeleteBackupFilesOf(ZlpDirectoryInfo dirPath, string docName)
         {
             string output;
