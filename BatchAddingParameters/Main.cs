@@ -29,6 +29,7 @@ namespace BatchAddingParameters
                 //ToolTipImage = PngImageSource("BatchAddingParameters.res.bap-icon.png"),
                 ToolTip = "Добавляет общие параметры в семейства, расположенные в указанной папке"
             };
+            MBtnData.AvailabilityClassName = "BatchAddingParameters.Availability";
             var TechBtn = techPanel.AddItem(MBtnData) as PushButton;
             TechBtn.LargeImage = new BitmapImage(new Uri(Path.GetDirectoryName(DllLocation) + "\\res\\bap-icon.png", UriKind.Absolute));
             //8TechBtn.LargeImage = PngImageSource("BatchAddingParameters.res.bap-icon.png");
@@ -47,5 +48,12 @@ namespace BatchAddingParameters
             return decoder.Frames[0];
         }
 
+    }
+    public class Availability : IExternalCommandAvailability
+    {
+        public bool IsCommandAvailable(UIApplication a, CategorySet b)
+        {
+            return true;
+        }
     }
 }

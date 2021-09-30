@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:BatchAddingParameters"
              mc:Ignorable="d"
              Title="Добавление общих параметров в семейства" Height="750" Width="800"
-             Background="SteelBlue" FontFamily="Segoe UI Light">
+        Background="SteelBlue"
+             FontFamily="Segoe UI Light">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -34,8 +35,8 @@
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Параметры для добавления в семейства" FontSize="16" TextAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Foreground="White" Margin="5"/>
-        <Button Grid.Column="4" Grid.Row="1" Background="Transparent" Foreground="Snow"  BorderThickness="0"
+        <TextBlock Text="Параметры для добавления в семейства" FontSize="16" Foreground="LightYellow" TextAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Margin="5"/>
+        <Button Grid.Column="4" Grid.Row="1" Background="Transparent"  BorderThickness="0"
                 x:Name="buttonHelp" Click="onButtonHelpClick" Content="?"  >
             <Button.Resources>
                 <Style TargetType="Border">
@@ -100,7 +101,7 @@
             </ListView.View>
         </ListView>
         
-        <TextBlock Text="Расположение семейств" FontSize="16" TextAlignment="Center" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Foreground="White" Margin="8"/>
+        <TextBlock Text="Расположение семейств" FontSize="16" Foreground="LightYellow" TextAlignment="Center" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="8"/>
 
         <StackPanel Grid.Row="7" Grid.Column="1">
             <Button Width="80" Height="80" Margin="0,0,0,5" Background="LightYellow" HorizontalAlignment="Left" Click="UserFolder_ButtonClick">
@@ -152,7 +153,7 @@
                     Grid.Column="3" Grid.Row="9"  Grid.ColumnSpan="2">
             <Button Content="Удалить параметры из семейств" FontSize="14" HorizontalAlignment="Left" 
                 Width="300" Height="60"
-                Margin="0,15,0,5" Background="LightPink" Click="ButtonDeleteParametersFromFamily_Click">
+                Margin="0,15,0,5" Background="LightGoldenrodYellow" Click="ButtonDeleteParametersFromFamily_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0" />
@@ -160,8 +161,8 @@
                 </Button.Resources>
             </Button>
             <Button Content="Добавить параметры в семейства" FontSize="14" HorizontalAlignment="Right" 
-                    Width="300" Height="60"
-                    Margin="25,15,0,5" Background="LightGreen" Click="ButtonAddParametersInToFamily_Click">
+                    Width="300" Height="60" 
+                    Margin="25,15,0,5" Background="LightGoldenrodYellow" Click="ButtonAddParametersInToFamily_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0" />
@@ -169,13 +170,13 @@
                 </Button.Resources>
             </Button>
         </StackPanel>
-        <TextBox x:Name="textBlockOutput" TextWrapping="Wrap" AcceptsReturn="True"
+        <TextBox x:Name="textBlockOutput" TextWrapping="Wrap" AcceptsReturn="True" Foreground="LightGoldenrodYellow"
                  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
-                 Background="Transparent" Foreground="Yellow" BorderThickness="1" BorderBrush="DarkSalmon"
+                 Background="Transparent" BorderThickness="1" BorderBrush="LightGray"
                  Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3"
                  Margin="0,10,0,0"/>
         <Separator Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3"
-                   Background="LightYellow" Width="20"/>
+                   Background="DarkSlateGray" Width="20"/>
 
     </Grid>
 </Window>
